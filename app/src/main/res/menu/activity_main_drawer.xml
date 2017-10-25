@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/dayView"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Denní pohled" />
+        <item
+            android:id="@+id/monthView"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Měsíční pohled" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/menuLogin"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Přihlásit" />
+            <item
+                android:id="@+id/menuLogout"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Odhlásit" />
+        </menu>
+    </item>
+
+</menu>
