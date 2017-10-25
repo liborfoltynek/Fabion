@@ -12,6 +12,6 @@
         android:layout_height="match_parent"
         android:id="@+id/linearLayout1"
         android:orientation="vertical"
-        tools:context="com.fotolibb.fabion.CalendarViewActivity">
+        tools:context="com.fotolibb.fabion.EventsByDaysScrollActivity">
         </LinearLayout>
 </ScrollView>

@@ -1,21 +1,25 @@
 package com.fotolibb.fabion;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -125,10 +129,8 @@ public class EventsByDaysScrollActivity extends AppCompatActivity {
 
 
     public void GenerateDayReservationsInfo(ArrayList<FabionEvent> events) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < events.toArray().length; i++) {
-            sb.append(((FabionEvent) events.toArray()[i]).getString(fabionUser));
-        }
+        //StringBuilder sb = new StringBuilder();
+
         String title = String.format("%d.%d.%d", mDay, mMonth, mYear);
         collapsingToolbarLayout.setTitle(title);
 
@@ -149,10 +151,14 @@ public class EventsByDaysScrollActivity extends AppCompatActivity {
 
         linearLayout.removeAllViews();
 
-        TextView t = new TextView(this);
-        t.setText(sb.toString());
-        linearLayout.addView(t);
-
+        for (int i = 0; i < events.toArray().length; i++) {
+            TextView t = new TextView(this);
+            t.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            t.setText(((FabionEvent) events.toArray()[i]).getString(fabionUser));
+            t.setPadding(60,20,60,20);
+            t.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell, null));
+            linearLayout.addView(t);
+        }
         flipper.showNext();
     }
 

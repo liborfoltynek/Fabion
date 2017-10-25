@@ -12,6 +12,6 @@
         android:collapseColumns=""
         android:shrinkColumns="*"
         android:stretchColumns="*"
-        tools:context="com.fotolibb.fabion.CalendarViewActivity">
+        tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity">
     </TableLayout>
 </ScrollView>
