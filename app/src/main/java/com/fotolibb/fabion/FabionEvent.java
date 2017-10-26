@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.R.attr.id;
+
 /**
  * Created by Libb on 19.10.2017.
  */
@@ -22,20 +24,58 @@ public class FabionEvent implements Parcelable {
             return new FabionEvent[size];
         }
     };
-    public String Login;
-    public String TimeFrom;
-    public String TimeTo;
-    public int Day;
-    public int Month;
-    public int Year;
-    public String Subject;
-    public String Note;
+
+    private int Id;
+    private String Login;
+    private String TimeFrom;
+    private String TimeTo;
+    private int Day;
+    private int Month;
+    private int Year;
+    private String Subject;
+    private String Note;
+
+    public int getId() {
+        return Id;
+    }
+
+    public String getLogin() {
+        return Login;
+    }
+
+    public String getTimeFrom() {
+        return TimeFrom;
+    }
+
+    public String getTimeTo() {
+        return TimeTo;
+    }
+
+    public int getDay() {
+        return Day;
+    }
+
+    public int getMonth() {
+        return Month;
+    }
+
+    public int getYear() {
+        return Year;
+    }
+
+    public String getSubject() {
+        return Subject;
+    }
+
+    public String getNote() {
+        return Note;
+    }
 
     public FabionEvent() {
-
     }
 
     protected FabionEvent(Parcel in) {
+        Id = in.readInt();
         Login = in.readString();
         TimeFrom = in.readString();
         TimeTo = in.readString();
@@ -47,6 +87,7 @@ public class FabionEvent implements Parcelable {
     }
 
     public FabionEvent(JSONObject jsonEventData) throws JSONException {
+        Id = jsonEventData.getInt("id");
         Day = jsonEventData.getInt("day");
         Month = jsonEventData.getInt("month");
         Year = jsonEventData.getInt("year");
@@ -92,6 +133,7 @@ public class FabionEvent implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(Id);
         parcel.writeString(Login);
         parcel.writeString(TimeFrom);
         parcel.writeString(TimeTo);

@@ -15,9 +15,6 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -26,11 +23,6 @@ import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import static com.fotolibb.fabion.Animations.animZlava;
-import static com.fotolibb.fabion.Animations.animZlava1;
-import static com.fotolibb.fabion.Animations.animZprava;
-import static com.fotolibb.fabion.Animations.animZprava1;
 
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer {
 
@@ -130,7 +122,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             TextView aa = (TextView) b.getChildAt(0);
             Integer day = Integer.parseInt(aa.getText().toString());
 
-            Intent intent = new Intent(getApplicationContext(), EventsByDaysScrollActivity.class);
+            Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity.class);
             intent.putExtra("FUser", fabionUser);
             intent.putExtra("Day", day);
             intent.putExtra("Month", month + 1);
@@ -263,14 +255,14 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         StringBuilder sb = new StringBuilder();
         boolean b = false;
         for (int i = 0; i < events.toArray().length; i++) {
-            if (((FabionEvent) events.toArray()[i]).Day == d) {
+            if (((FabionEvent) events.toArray()[i]).getDay() == d) {
                 if (b)
                     sb.append("\n");
                 if (!b) {
                     b = true;
                 }
                 if (fabionUser.isLogged()) {
-                    sb.append(((FabionEvent) events.toArray()[i]).Login);
+                    sb.append(((FabionEvent) events.toArray()[i]).getLogin());
                 } else {
                     sb.append("***");
                 }

@@ -16,4 +16,6 @@
     <string name="title_activity_events_by_days_scroll">EventsByDaysScrollActivity</string>
     <string name="title_activity_events_by_months_scrolling">EventsByMonthsScrollingActivity
     </string>
+    <string name="title_activity_event_detail">EventDetailActivity</string>
+
 </resources>

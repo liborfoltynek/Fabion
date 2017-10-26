@@ -21,9 +21,7 @@ import static android.content.ContentValues.TAG;
 
 /**
  * Created by Libb on 19.10.2017.
- *
  */
-
 
 public class LoadDataByMonthsAsyncTask
         extends AsyncTask<Object, Object, ArrayList> {
