@@ -32,15 +32,17 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_event_detail" />
+    <include layout="@layout/content_event_detail"
+        android:id="@+id/include3" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"
+        app:layout_anchor="@+id/include3"
+        app:layout_anchorGravity="bottom|right"
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
 </android.support.design.widget.CoordinatorLayout>

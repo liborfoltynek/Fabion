@@ -7,13 +7,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class EventDetailActivity extends AppCompatActivity {
 
     private FabionEvent fabionEvent;
     private FabionUser fabionUser;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +26,17 @@ public class EventDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                Boolean isEnabled = !findViewById(R.id.eventDetailSubject).isEnabled();
+
+                findViewById(R.id.eventDetailOK).setEnabled(isEnabled);
+                findViewById(R.id.eventDetailOK).setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+
+                //findViewById(R.id.eventDetailLogin).setEnabled(isEnabled);
+                findViewById(R.id.eventDetailSubject).setEnabled(isEnabled);
+                findViewById(R.id.eventDetailNote).setEnabled(isEnabled);
+                findViewById(R.id.eventDetailTimeFrom).setEnabled(isEnabled);
+                findViewById(R.id.eventDetailTimeTo).setEnabled(isEnabled);
             }
         });
 
@@ -34,9 +44,9 @@ public class EventDetailActivity extends AppCompatActivity {
         fabionEvent = i.getExtras().getParcelable("FEvent");
         fabionUser = i.getExtras().getParcelable("FUser");
 
-        ((EditText)findViewById(R.id.eventDetailLogin)).setText(fabionEvent.getLogin());
-        ((EditText)findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
-        ((EditText)findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
-        ((EditText)findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
+        ((EditText) findViewById(R.id.eventDetailLogin)).setText(fabionEvent.getLogin());
+        ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
+        ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
+        ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
     }
 }

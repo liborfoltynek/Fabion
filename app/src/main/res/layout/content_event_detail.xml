@@ -97,7 +97,8 @@
 
         <Button
             android:text="OK"
-            android:visibility="visible"
+            android:id="@+id/eventDetailOK"
+            android:visibility="gone"
             android:layout_column="0"
             android:layout_columnSpan="4"
             android:layout_width="match_parent"
