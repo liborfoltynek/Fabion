@@ -3,6 +3,9 @@ package com.fotolibb.fabion;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Libb on 19.10.2017.
  */
@@ -41,6 +44,17 @@ public class FabionEvent implements Parcelable {
         Year = in.readInt();
         Subject = in.readString();
         Note = in.readString();
+    }
+
+    public FabionEvent(JSONObject jsonEventData) throws JSONException {
+        Day = jsonEventData.getInt("day");
+        Month = jsonEventData.getInt("month");
+        Year = jsonEventData.getInt("year");
+        Login = jsonEventData.getString("login");
+        TimeFrom = jsonEventData.getString("timefrom");
+        TimeTo = jsonEventData.getString("timeto");
+        Subject = jsonEventData.getString("subject");
+        Note = jsonEventData.getString("note");
     }
 
     @Override

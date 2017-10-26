@@ -27,7 +27,12 @@ import android.widget.ViewFlipper;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class EventsByMonthsScrollingActivity extends AppCompatActivity {
+import static com.fotolibb.fabion.Animations.animZlava;
+import static com.fotolibb.fabion.Animations.animZlava1;
+import static com.fotolibb.fabion.Animations.animZprava;
+import static com.fotolibb.fabion.Animations.animZprava1;
+
+public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer {
 
 
     private int month;
@@ -137,10 +142,11 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity {
         }
     }
 
-    public void GenerateCalendar(int mMonth, int mYear, ArrayList<FabionEvent> events) {
+    @Override
+    public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
 
-        toolbarLayout.setTitle(String.format("%d/%d %s", mMonth + 1, mYear, fabionUser.isLogged() ?  String.format("[%s]",fabionUser.Login) : ""));
+        toolbarLayout.setTitle(String.format("%d/%d %s", month + 1, year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
 
         TableLayout tableLayout;
         if (nStav == 0)
@@ -158,8 +164,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity {
         int today = c.get(Calendar.DAY_OF_MONTH);
         int tomonth = c.get(Calendar.MONTH);
         c.set(Calendar.DAY_OF_MONTH, 1);
-        c.set(Calendar.MONTH, mMonth);
-        c.set(Calendar.YEAR, mYear);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.YEAR, year);
         int day = c.get(Calendar.DAY_OF_WEEK);
 
         if (day != 1) {
@@ -202,7 +208,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity {
                     if (d == 6) {
                         tvDate.setTextColor(Color.RED);
                     }
-                    if ((mMonth == tomonth) && (day == today)) {
+                    if ((month == tomonth) && (day == today)) {
                         tvDate.setTypeface(null, Typeface.BOLD);
                     }
                     l.addView(tvDate);
@@ -222,11 +228,11 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity {
         }
 
         if (delta == 1) {
-            flipper.setInAnimation(animZprava());
-            flipper.setOutAnimation(animZlava());
+            flipper.setInAnimation(Animations.animZprava());
+            flipper.setOutAnimation(Animations.animZlava());
         } else {
-            flipper.setInAnimation(animZprava1());
-            flipper.setOutAnimation(animZlava1());
+            flipper.setInAnimation(Animations.animZprava1());
+            flipper.setOutAnimation(Animations.animZlava1());
         }
         flipper.showNext();
     }
@@ -242,7 +248,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity {
         tableLayout.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
     }
 
-    private TextView getDayInWeekHeaderCell(String day){
+    private TextView getDayInWeekHeaderCell(String day) {
         TextView t = new TextView(this);
         t.setText(day);
         t.setGravity(Gravity.CENTER);
@@ -271,51 +277,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity {
             }
         }
         return sb.toString();
-    }
-
-
-    private Animation animZprava() {
-        Animation zprava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, +1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zprava.setDuration(250);
-        zprava.setInterpolator(new LinearInterpolator());
-        return zprava;
-    }
-
-    private Animation animZlava() {
-        Animation zlava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, -1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zlava.setDuration(250);
-        zlava.setInterpolator(new LinearInterpolator());
-        return zlava;
-    }
-
-    private Animation animZprava1() {
-        Animation zprava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, -1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zprava.setDuration(250);
-        zprava.setInterpolator(new LinearInterpolator());
-        return zprava;
-    }
-
-    private Animation animZlava1() {
-        Animation zlava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, +1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zlava.setDuration(250);
-        zlava.setInterpolator(new LinearInterpolator());
-        return zlava;
     }
 
 

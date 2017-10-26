@@ -29,7 +29,8 @@
         <activity
             android:name=".EventsByMonthsScrollingActivity"
             android:label="@string/title_activity_events_by_months_scrolling"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".OneDayEventsView"></activity>
     </application>
 
 </manifest>

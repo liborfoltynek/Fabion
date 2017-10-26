@@ -84,17 +84,8 @@ public class LoadDataByMonthsAsyncTask
             JSONArray eventsJSONObject = jsonObject.getJSONArray("events");
             for (int i = 0; i < eventsJSONObject.length(); i++) {
                 {
-                    JSONObject event = eventsJSONObject.getJSONObject(i);
-                    FabionEvent fe = new FabionEvent();
-                    fe.Day = event.getInt("day");
-                    fe.Month = event.getInt("month");
-                    fe.Year = event.getInt("year");
-                    fe.Login = event.getString("login");
-                    fe.TimeFrom = event.getString("timefrom");
-                    fe.TimeTo = event.getString("timeto");
-                    fe.Subject = event.getString("subject");
-                    fe.Note = event.getString("note");
-
+                    JSONObject jsonEventData = eventsJSONObject.getJSONObject(i);
+                    FabionEvent fe = new FabionEvent(jsonEventData);
                     events.add(fe);
                 }
             }
@@ -106,8 +97,7 @@ public class LoadDataByMonthsAsyncTask
 
     @Override
     protected void onPostExecute(ArrayList result) {
-        callingActivity.GenerateCalendar(mMonth, mYear, events);
+        callingActivity.ProcessData(events);
     }
-
 }
 

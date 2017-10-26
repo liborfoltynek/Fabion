@@ -26,9 +26,13 @@ import android.widget.ViewFlipper;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.fotolibb.fabion.Animations.animZlava;
+import static com.fotolibb.fabion.Animations.animZlava1;
+import static com.fotolibb.fabion.Animations.animZprava;
+import static com.fotolibb.fabion.Animations.animZprava1;
 import static com.fotolibb.fabion.R.menu.main;
 
-public class EventsByDaysScrollActivity extends AppCompatActivity {
+public class EventsByDaysScrollActivity extends AppCompatActivity implements IEventsConsumer {
 
     EventsByDaysScrollActivity mainView;
     String URL;
@@ -127,10 +131,8 @@ public class EventsByDaysScrollActivity extends AppCompatActivity {
         mYear = c.get(Calendar.YEAR);
     }
 
-
-    public void GenerateDayReservationsInfo(ArrayList<FabionEvent> events) {
-        //StringBuilder sb = new StringBuilder();
-
+    @Override
+    public void ProcessData(ArrayList<FabionEvent> events) {
         String title = String.format("%d.%d.%d", mDay, mMonth, mYear);
         collapsingToolbarLayout.setTitle(title);
 
@@ -142,11 +144,11 @@ public class EventsByDaysScrollActivity extends AppCompatActivity {
         }
 
         if (delta == 1) {
-            flipper.setInAnimation(animZprava());
-            flipper.setOutAnimation(animZlava());
+            flipper.setInAnimation(Animations.animZprava());
+            flipper.setOutAnimation(Animations.animZlava());
         } else {
-            flipper.setInAnimation(animZprava1());
-            flipper.setOutAnimation(animZlava1());
+            flipper.setInAnimation(Animations.animZprava1());
+            flipper.setOutAnimation(Animations.animZlava1());
         }
 
         linearLayout.removeAllViews();
@@ -155,55 +157,10 @@ public class EventsByDaysScrollActivity extends AppCompatActivity {
             TextView t = new TextView(this);
             t.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             t.setText(((FabionEvent) events.toArray()[i]).getString(fabionUser));
-            t.setPadding(60,20,60,20);
+            t.setPadding(60, 20, 60, 20);
             t.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell, null));
             linearLayout.addView(t);
         }
         flipper.showNext();
     }
-
-    private Animation animZprava() {
-        Animation zprava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, +1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zprava.setDuration(250);
-        zprava.setInterpolator(new LinearInterpolator());
-        return zprava;
-    }
-
-    private Animation animZlava() {
-        Animation zlava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, -1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zlava.setDuration(250);
-        zlava.setInterpolator(new LinearInterpolator());
-        return zlava;
-    }
-
-    private Animation animZprava1() {
-        Animation zprava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, -1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zprava.setDuration(250);
-        zprava.setInterpolator(new LinearInterpolator());
-        return zprava;
-    }
-
-    private Animation animZlava1() {
-        Animation zlava = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, +1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        zlava.setDuration(250);
-        zlava.setInterpolator(new LinearInterpolator());
-        return zlava;
-    }
-
 }
