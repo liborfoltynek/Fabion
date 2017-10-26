@@ -34,7 +34,6 @@
             android:layout_marginStart="@dimen/text_margin"
             android:text="" />
 
-        <!-- ----------------------------------------------------------------- -->
 
         <TextView
             android:text="Subjekt: "
@@ -50,7 +49,7 @@
             android:enabled="false"
             android:text="" />
 
-        <!-- ----------------------------------------------------------------- -->
+
 
         <TextView
             android:text="Čas: "
@@ -78,7 +77,7 @@
             android:text="" />
 
 
-        <!-- ----------------------------------------------------------------- -->
+
 
         <TextView
             android:text="Poznámka: "
@@ -94,7 +93,7 @@
             android:enabled="false"
             android:text="" />
 
-        <!-- ----------------------------------------------------------------- -->
+
 
         <Button
             android:text="OK"
