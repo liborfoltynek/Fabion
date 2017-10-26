@@ -4,78 +4,108 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.fotolibb.fabion.EventDetailActivity"
     tools:showIn="@layout/activity_event_detail">
 
-    <LinearLayout
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/cell"
-        >
+        android:layout_height="match_parent"
+        android:columnOrderPreserved="false"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:columnCount="4" >
 
-        <TableRow>
-            <TextView
-                android:text="Login: "
-                android:backgroundTint="#00FF00"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin" />
+        <TextView
+            android:text="Login: "
+            android:backgroundTint="#00FF00"
+            android:layout_width="wrap_content"
+            android:layout_column="0" />
 
-            <EditText
-                android:id="@+id/eventDetailLogin"
-                android:layout_span="3"
-                android:enabled="false"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin"
-                android:text="" />
-        </TableRow>
+        <EditText
+            android:id="@+id/eventDetailLogin"
+            android:layout_column="1"
+            android:layout_columnSpan="3"
+            android:enabled="false"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text="" />
 
-        <TableRow>
-            <TextView
-                android:text="Subjekt: "
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin" />
+        <!-- ----------------------------------------------------------------- -->
 
-            <EditText
-                android:id="@+id/eventDetailSubject"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin"
-                android:layout_span="4"
-                android:enabled="false"
-                android:text="" />
-        </TableRow>
+        <TextView
+            android:text="Subjekt: "
+            android:layout_column="0"
+            android:layout_width="wrap_content" />
 
-        <TableRow>
-            <TextView
-                android:text="Čas: "
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin" />
+        <EditText
+            android:id="@+id/eventDetailSubject"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_column="1"
+            android:layout_columnSpan="3"
+            android:enabled="false"
+            android:text="" />
 
-            <EditText
-                android:id="@+id/eventDetailTimeFrom"
-                android:enabled="false"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin"
-                android:text="" />
-            <TextView
-                android:text=" - "
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin" />
-            <EditText
-                android:id="@+id/eventDetailTimeTo"
-                android:enabled="false"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="@dimen/text_margin"
-                android:text="" />
-        </TableRow>
+        <!-- ----------------------------------------------------------------- -->
 
-        </TableLayout>
+        <TextView
+            android:text="Čas: "
+            android:layout_width="wrap_content"
+            android:layout_column="0" />
 
-    </LinearLayout>
+        <EditText
+            android:id="@+id/eventDetailTimeFrom"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_column="1"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text="" />
+        <TextView
+            android:text=" - "
+            android:layout_width="wrap_content"
+            android:layout_column="2"
+            android:layout_marginStart="@dimen/text_margin" />
+        <EditText
+            android:id="@+id/eventDetailTimeTo"
+            android:enabled="false"
+            android:layout_column="3"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text="" />
+
+
+        <!-- ----------------------------------------------------------------- -->
+
+        <TextView
+            android:text="Poznámka: "
+            android:layout_column="0"
+            android:layout_width="wrap_content" />
+
+        <EditText
+            android:id="@+id/eventDetailNote"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_column="1"
+            android:layout_columnSpan="3"
+            android:enabled="false"
+            android:text="" />
+
+        <!-- ----------------------------------------------------------------- -->
+
+        <Button
+            android:text="OK"
+            android:visibility="visible"
+            android:layout_column="0"
+            android:layout_columnSpan="4"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content" />
+    </GridLayout>
+
+
 
 </android.support.v4.widget.NestedScrollView>
