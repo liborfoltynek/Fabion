@@ -14,7 +14,7 @@ public class EventDetailActivity extends AppCompatActivity {
 
     private FabionEvent fabionEvent;
     private FabionUser fabionUser;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,38 +1,31 @@
 package com.fotolibb.fabion;
 
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.R.attr.process;
-
 public class OneDayEventsViewActivity extends ListActivity implements IEventsConsumer {
     private static final int ITEM_ID_FUNKCE1 = Menu.FIRST + 1;
-    private static final int ITEM_ID_FUNKCE2 = Menu.FIRST + 2;
-    private static final int ITEM_ID_FUNKCE3 = Menu.FIRST + 3;
     private int mDay;
     private int mMonth;
     private int mYear;
@@ -92,10 +85,13 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     public void onCreateContextMenu(ContextMenu menu, View view,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == this.getListView().getId()) {
+
+            ListView lv = (ListView) view;
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            Object obj = lv.getItemAtPosition(acmi.position);
+
             menu.setHeaderTitle("Funkce");
-            menu.add(Menu.NONE, ITEM_ID_FUNKCE1, Menu.NONE, "Funkce1");
-            menu.add(Menu.NONE, ITEM_ID_FUNKCE2, Menu.NONE, "Funkce2");
-            menu.add(Menu.NONE, ITEM_ID_FUNKCE3, Menu.NONE, "Funkce3");
+            menu.add(Menu.NONE, ITEM_ID_FUNKCE1, Menu.NONE, "Smazat");
         }
     }
 
@@ -103,20 +99,38 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case ITEM_ID_FUNKCE1:
-                Toast.makeText(getApplicationContext(), "Funkce1",
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            case ITEM_ID_FUNKCE2:
-                Toast.makeText(getApplicationContext(), "Funkce2",
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            case ITEM_ID_FUNKCE3:
-                Toast.makeText(getApplicationContext(), "Funkce3",
-                        Toast.LENGTH_SHORT).show();
+
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                ListView lv = getListView();
+                HashMap hashMap = (HashMap) lv.getItemAtPosition(info.position);
+                final String eventId = (String) hashMap.get("id");
+                final String subj = (String) hashMap.get("subject");
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Skutečne smazat?\n" + subj);
+                builder.setCancelable(false);
+                builder.setPositiveButton("Ano",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                deleteEvent(eventId);
+                            }
+                        });
+                builder.setNegativeButton("Ne",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    private void deleteEvent(String eventId) {
+        new DeleteEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), eventId, thisActivity).execute();
     }
 
     private ListAdapter getListAdapter(List<FabionEvent> fabionEvents) {
@@ -140,6 +154,24 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
             list.add(polozkyMap);
         }
         return list;
+    }
+
+    public void ProcessData(final String result, String deletedId) {
+        try {
+            if (result.equalsIgnoreCase("ok")) {
+                new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, URL, fabionUser, this).execute();
+            }
+            else {
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        } catch (Exception ex) {
+            Log.e("EX", ex.getMessage());
+        }
     }
 }
 
