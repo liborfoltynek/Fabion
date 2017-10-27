@@ -43,6 +43,8 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
         mMonth = c.get(Calendar.MONTH) + 1;
         mYear = c.get(Calendar.YEAR);
 
+        setResult(RESULT_CANCELED);
+
         URL = getResources().getString(R.string.url_fabion_service) + "getday.php?d=%d&m=%d&y=%d";
         Intent i = getIntent();
         fabionUser = i.getExtras().getParcelable("FUser");
@@ -55,12 +57,11 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
             mYear = y;
         }
 
-        new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, URL, fabionUser, this).execute();
+        loadData();
     }
 
     @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
-
         this.fabionEvents = events;
         setListAdapter(getListAdapter(events));
         registerForContextMenu(getListView());
@@ -156,10 +157,15 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
         return list;
     }
 
+    private void loadData() {
+        new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, URL, fabionUser, this).execute();
+    }
+
     public void ProcessData(final String result, String deletedId) {
         try {
             if (result.equalsIgnoreCase("ok")) {
-                new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, URL, fabionUser, this).execute();
+                setResult(RESULT_OK);
+                loadData();
             }
             else {
                 Handler h = new Handler(Looper.getMainLooper());

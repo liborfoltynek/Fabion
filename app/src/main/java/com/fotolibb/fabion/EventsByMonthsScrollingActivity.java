@@ -75,7 +75,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2,
                                            float rychlostX, float rychlostY) {
-                        //Toast.makeText(mainView, String.format("%f : %f",rychlostX ,rychlostY), Toast.LENGTH_SHORT).show();
                         if (rychlostY < 3000 && rychlostY > -3000) {
 
                             if (rychlostX < -10.0f) {
@@ -85,28 +84,27 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     month = 0;
                                     year++;
                                 }
-                                //new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, 1, nStav, URL, flipper, lay, fabionUser).execute();
-                                new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                                 nStav = nStav == 0 ? 1 : 0;
+                                new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                             }
 
                             if (rychlostX > 10.0f) {
-                                //mDay--;
-                                //new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, -1, nStav, URL, flipper, lay, fabionUser).execute();
                                 month--;
                                 delta = -1;
                                 if (month < 0) {
                                     month = 11;
                                     year--;
                                 }
-                                new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                                 nStav = nStav == 0 ? 1 : 0;
+                                new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                             }
                         }
                         return true;
                     }
                 });
 
+        nStav = 0;
+        delta = 0;
         new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, this).execute();
     }
 
@@ -127,7 +125,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             intent.putExtra("Day", day);
             intent.putExtra("Month", month + 1);
             intent.putExtra("Year", year);
-            startActivity(intent);
+            startActivityForResult(intent, 2);
 
         } catch (Exception ex) {
             Log.e("EX", ex.getMessage());
@@ -135,6 +133,15 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2 && resultCode == RESULT_OK)
+        {
+            delta = 0;
+            new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+        }
+    }
+
+        @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
 
@@ -226,7 +233,10 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             flipper.setInAnimation(Animations.animZprava1());
             flipper.setOutAnimation(Animations.animZlava1());
         }
-        flipper.showNext();
+
+        if (delta != 0) {
+            flipper.showNext();
+        }
     }
 
     private void InitDaysHeader(TableRow tr, TableLayout tableLayout) {
@@ -270,6 +280,4 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
         return sb.toString();
     }
-
-
 }

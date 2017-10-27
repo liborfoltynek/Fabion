@@ -11,8 +11,8 @@
     <string name="action_sign_alreadylogged">Už jste přihlášen</string>
     <string name="not_implemented">Ještě není implementováno</string>
 
-    <string name="url_fabion_service">http://atelier.fotolibb.com/services/</string>
-    <string name="url_fabion_service1">http://temp.foltynek.cz/atelier/services/</string>
+    <string name="url_fabion_service1">http://atelier.fotolibb.com/services/</string>
+    <string name="url_fabion_service">http://temp.foltynek.cz/atelier/services/</string>
     <string name="title_activity_events_by_days_scroll">EventsByDaysScrollActivity</string>
     <string name="title_activity_events_by_months_scrolling">EventsByMonthsScrollingActivity
     </string>
