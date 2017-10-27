@@ -25,6 +25,11 @@ public class FabionUser implements Parcelable {
     public String Email;
     public int FreeHours;
     public boolean Admin;
+
+    public int getId() {
+        return Id;
+    }
+
     private int Id;
 
     public FabionUser() {
