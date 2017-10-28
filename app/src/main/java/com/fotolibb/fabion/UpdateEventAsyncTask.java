@@ -1,9 +1,7 @@
 package com.fotolibb.fabion;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,25 +18,25 @@ import java.net.URL;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by Libb on 27.10.2017.
+ * Created by Libb on 28.10.2017.
  */
 
-public class DeleteEventAsyncTask
+public class UpdateEventAsyncTask
         extends AsyncTask<String, String, String> {
 
-    public FabionUser fabionUser;
+    public FabionEvent fabionEvent;
     private String login;
     private String password;
-    private String eventId;
     private String servicesUrl;
-    private OneDayEventsViewActivity callingActivity;
+    private EventDetailActivity callingActivity;
 
-    public DeleteEventAsyncTask(String login, String passwordHash, String servicesUrl, String eventId, OneDayEventsViewActivity callingActivity) {
+    public UpdateEventAsyncTask(String login, String passwordHash, String servicesUrl, FabionEvent fabionEvent, EventDetailActivity callingActivity) {
         this.login = login;
         this.password = passwordHash;
-        this.eventId = eventId;
+
         this.servicesUrl = servicesUrl;
         this.callingActivity = callingActivity;
+        this.fabionEvent = fabionEvent;
     }
 
     protected String doInBackground(String... arg0) {
@@ -46,8 +44,17 @@ public class DeleteEventAsyncTask
         InputStream in = null;
 
         try {
-            String mainUrl = servicesUrl + "event.php?action=d&l=%s&p=%s&id=%s";
-            URL url = new URL(String.format(mainUrl, login, password, eventId));
+            String mainUrl = servicesUrl + "event.php?action=u&l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&";
+            URL url = new URL(String.format(mainUrl, login, password,
+                    fabionEvent.getId(),
+                    fabionEvent.getTimeFrom(),
+                    fabionEvent.getTimeTo(),
+                    fabionEvent.getSubject(),
+                    fabionEvent.getNote(),
+                    fabionEvent.getDay(),
+                    fabionEvent.getMonth(),
+                    fabionEvent.getYear()
+            ));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             in = new BufferedInputStream(conn.getInputStream());
@@ -86,7 +93,5 @@ public class DeleteEventAsyncTask
         return sJSON;
     }
 }
-
-
 
 

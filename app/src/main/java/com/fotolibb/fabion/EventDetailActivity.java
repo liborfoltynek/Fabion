@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,7 +31,10 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
     private EditText eventDetailDateTextView;
+    private Button eventDetailButtonOK;
     private EditText eventTimeFromTextView, eventTimeToTextView;
+
+    private int day, month, year;
 
     private int TIME_PICKER_THEME = 3;
     private int TIME_FROM = 0;
@@ -41,6 +45,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         try {
             setContentView(R.layout.activity_event_detail);
+            setResult(RESULT_CANCELED);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //, Locale.forLanguageTag("CS"));
@@ -49,6 +54,10 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             Intent i = getIntent();
             fabionEvent = i.getExtras().getParcelable("FEvent");
             fabionUser = i.getExtras().getParcelable("FUser");
+
+            day = fabionEvent.getDay();
+            month = fabionEvent.getMonth();
+            year = fabionEvent.getYear();
 
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -87,10 +96,27 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
+            ((EditText) findViewById(R.id.eventDetailNote)).setText(fabionEvent.getNote());
             ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%d.%d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
         } catch (Exception ex) {
             Log.e("EX", ex.getLocalizedMessage());
         }
+    }
+
+    // OK, update
+    public void onEventDetailButtonClick(View v) {
+        FabionEvent f = new FabionEvent(
+                fabionEvent.getId(),
+                ((EditText) findViewById(R.id.eventDetailLogin)).getText().toString(),
+                ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString(),
+                ((EditText) findViewById(R.id.eventDetailNote)).getText().toString(),
+                ((EditText) findViewById(R.id.eventDetailTimeFrom)).getText().toString(),
+                ((EditText) findViewById(R.id.eventDetailTimeTo)).getText().toString(),
+                day,
+                month,
+                year);
+
+        new UpdateEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), f, this).execute();
     }
 
     private void findViewsById() {
@@ -98,6 +124,8 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         eventTimeFromTextView = (EditText) findViewById(R.id.eventDetailTimeFrom);
         eventTimeToTextView = (EditText) findViewById(R.id.eventDetailTimeTo);
         eventDetailDateTextView.setInputType(InputType.TYPE_NULL);
+
+        eventDetailButtonOK = (Button) findViewById(R.id.eventDetailOK);
 
         eventTimeFromTextView.setInputType(InputType.TYPE_NULL);
         eventTimeToTextView.setInputType(InputType.TYPE_NULL);
@@ -112,9 +140,12 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         Calendar newCalendar = Calendar.getInstance();
 
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            public void onDateSet(DatePicker view, int yearInput, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
+                newDate.set(yearInput, monthOfYear, dayOfMonth);
+                month = monthOfYear+1;
+                year = yearInput;
+                day = dayOfMonth;
                 eventDetailDateTextView.setText(dateFormatter.format(newDate.getTime()));
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -145,19 +176,27 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
+        // datum
         if (view == eventDetailDateTextView) {
             datePickerDialog.updateDate(fabionEvent.getYear(), fabionEvent.getMonth() - 1, fabionEvent.getDay());
             datePickerDialog.show();
         }
+        // time from
         if (view == eventTimeFromTextView) {
             Calendar c = getTimeFromFabionEvent(fabionEvent, TIME_FROM);
             timePickerDialogFrom.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogFrom.show();
         }
+        // time to
         if (view == eventTimeToTextView) {
             Calendar c = getTimeFromFabionEvent(fabionEvent, TIME_TO);
             timePickerDialogTo.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogTo.show();
+        }
+        // OK (update)
+        if (view == eventDetailButtonOK)
+        {
+            onEventDetailButtonClick(view);
         }
     }
 
@@ -184,5 +223,14 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             c.set(Calendar.MINUTE, 30);
         }
         Toast.makeText(getApplicationContext(), R.string.MSG_WARN_TIME_MUST_BE_OF_HALF_HOUR, Toast.LENGTH_SHORT).show();
+    }
+
+    public void ProcessData(String result) {
+        if (result.equalsIgnoreCase("ok")) {
+            setResult(RESULT_OK);
+            finish();
+        }
+        else
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
     }
 }

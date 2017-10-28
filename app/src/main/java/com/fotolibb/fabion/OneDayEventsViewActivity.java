@@ -35,6 +35,8 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     private ArrayList<FabionEvent> fabionEvents;
     private OneDayEventsViewActivity thisActivity;
 
+    private int RC_UPDATE = 443;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +80,7 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
                 FabionEvent fe = (FabionEvent) fabionEvents.toArray()[position];
                 intent.putExtra("FUser", fabionUser);
                 intent.putExtra("FEvent", fe);
-                startActivity(intent);
+                startActivityForResult(intent, RC_UPDATE);
             }
         });
     }
@@ -87,8 +89,6 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     public void onCreateContextMenu(ContextMenu menu, View view,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == this.getListView().getId()) {
-
-
             ListView lv = (ListView) view;
 
             HashMap hashMap = (HashMap) lv.getItemAtPosition(((AdapterView.AdapterContextMenuInfo) menuInfo).position);
@@ -169,7 +169,14 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
         new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, URL, fabionUser, this).execute();
     }
 
-    public void ProcessData(final String result, String deletedId) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode == RC_UPDATE) && (resultCode == RESULT_OK)) {
+            setResult(RESULT_OK);
+            loadData();
+        }
+    }
+
+    public void ProcessData(final String result) {
         try {
             if (result.equalsIgnoreCase("ok")) {
                 setResult(RESULT_OK);

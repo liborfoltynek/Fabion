@@ -103,9 +103,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.dayView) {
-            DayView();
-        } else if (id == R.id.monthView) {
+        if (id == R.id.monthView) {
             MonthView(this);
         } else if (id == R.id.menuLogin) {
             Login();
@@ -123,14 +121,6 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("FUser", fabionUser);
         startActivity(intent);
     }
-
-    private void DayView() {
-        //Intent intent = new Intent(getApplicationContext(), EventsByDaysActivity.class);
-        Intent intent = new Intent(getApplicationContext(), EventsByDaysScrollActivity.class);
-        intent.putExtra("FUser", fabionUser);
-        startActivity(intent);
-    }
-
     private void Login()
     {
         Login(true);

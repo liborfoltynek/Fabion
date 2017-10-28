@@ -84,6 +84,20 @@ public class FabionEvent implements Parcelable {
         Note = in.readString();
     }
 
+    public FabionEvent(int id, String login, String subject, String note, String tFrom, String tTo, int day, int month, int year) {
+        Id = id;
+        Login = login;
+        TimeFrom = tFrom;
+        TimeTo = tTo;
+        Day = day;
+        Month = month;
+        Year = year;
+        Subject = subject;
+        Note = note;
+    }
+
+
+
     public FabionEvent(JSONObject jsonEventData) throws JSONException {
         Id = jsonEventData.getInt("id");
         Day = jsonEventData.getInt("day");
