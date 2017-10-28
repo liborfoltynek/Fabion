@@ -98,8 +98,9 @@ public class OneDayEventsViewActivity2 extends AppCompatActivity implements Adap
     }
 
     private void deleteEvent(final FabionEvent fEvent) {
-    deleteEvent(fEvent, null);
+        deleteEvent(fEvent, null);
     }
+
     private void deleteEvent(final FabionEvent fEvent, final ImageView imView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Skutečne smazat?\n" + fEvent.getSubject());
@@ -146,10 +147,10 @@ public class OneDayEventsViewActivity2 extends AppCompatActivity implements Adap
     }
 
     public void onDeleteButtonClick(View v) {
-        ((ImageView)v).setImageResource(R.drawable.delete);
+        ((ImageView) v).setImageResource(R.drawable.delete);
         for (int i = 0; i < fabionEvents.size(); i++) {
             if (Integer.toString(fabionEvents.get(i).getId()).equalsIgnoreCase((String) v.getContentDescription())) {
-                deleteEvent(fabionEvents.get(i), (ImageView)v);
+                deleteEvent(fabionEvents.get(i), (ImageView) v);
                 break;
             }
         }
@@ -159,7 +160,8 @@ public class OneDayEventsViewActivity2 extends AppCompatActivity implements Adap
     public void ProcessData(ArrayList<FabionEvent> events) {
         fabionEvents = events;
         listView = (ListView) findViewById(R.id.list);
-        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser);
+        String url = getResources().getString(R.string.url_fabion_service);
+        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         registerForContextMenu(listView);

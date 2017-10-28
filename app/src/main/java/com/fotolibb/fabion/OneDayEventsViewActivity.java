@@ -70,9 +70,9 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.fabionEvents = events;
-
+String url = getResources().getString(R.string.url_fabion_service) ;
         listView = (ListView) findViewById(R.id.list);
-        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser);
+        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
 
