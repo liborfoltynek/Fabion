@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity
 
         fabionUser = new FabionUser();
         setFabionUserInfoText();
+
+        Login(false);
     }
 
     @Override
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //noinspection Simplifiabl  eIfStatement
         if (id == R.id.action_settings) {
             ShowNotImplemented(this);
             return true;
@@ -93,7 +96,6 @@ public class MainActivity extends AppCompatActivity
     private void ShowNotImplemented(MainActivity mainActivity) {
         Toast.makeText(mainActivity, R.string.not_implemented, Toast.LENGTH_LONG).show();
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -129,8 +131,12 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void Login() {
-        if (fabionUser.isLogged()) {
+    private void Login()
+    {
+        Login(true);
+    }
+    private void Login(Boolean showAlreadyLoggedMessage) {
+        if (fabionUser.isLogged() && showAlreadyLoggedMessage) {
             Toast.makeText(this, R.string.action_sign_alreadylogged, Toast.LENGTH_SHORT).show();
         } else {
             try {
@@ -154,6 +160,8 @@ public class MainActivity extends AppCompatActivity
                 if (data.hasExtra("FUser")) {
                     fabionUser = data.getParcelableExtra("FUser");
                     setFabionUserInfoText();
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.openDrawer(Gravity.LEFT);
                 }
             } else if (resultCode == RESULT_CANCELED) {
                 fabionUser = new FabionUser();

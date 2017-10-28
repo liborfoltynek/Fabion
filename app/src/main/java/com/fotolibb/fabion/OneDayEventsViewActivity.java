@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 public class OneDayEventsViewActivity extends ListActivity implements IEventsConsumer {
-    private static final int ITEM_ID_FUNKCE1 = Menu.FIRST + 1;
+    private static final int ITEM_ID_DELETE = Menu.FIRST + 1;
+    private static final int ITEM_ID_BACK = Menu.FIRST + 2;
     private int mDay;
     private int mMonth;
     private int mYear;
@@ -87,20 +88,23 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == this.getListView().getId()) {
 
-            ListView lv = (ListView) view;
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            Object obj = lv.getItemAtPosition(acmi.position);
 
+            ListView lv = (ListView) view;
+
+            HashMap hashMap = (HashMap) lv.getItemAtPosition(((AdapterView.AdapterContextMenuInfo) menuInfo).position);
+            final String login = (String) hashMap.get("login");
             menu.setHeaderTitle("Funkce");
-            menu.add(Menu.NONE, ITEM_ID_FUNKCE1, Menu.NONE, "Smazat");
+            if (login.equalsIgnoreCase(fabionUser.Login)) {
+                menu.add(Menu.NONE, ITEM_ID_DELETE, Menu.NONE, "Smazat");
+            }
+            menu.add(Menu.NONE, ITEM_ID_BACK, Menu.NONE, "Zpět");
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case ITEM_ID_FUNKCE1:
-
+            case ITEM_ID_DELETE:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 ListView lv = getListView();
                 HashMap hashMap = (HashMap) lv.getItemAtPosition(info.position);
@@ -125,6 +129,9 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
                 return true;
+            case ITEM_ID_BACK:
+                finish();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
@@ -135,8 +142,8 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     }
 
     private ListAdapter getListAdapter(List<FabionEvent> fabionEvents) {
-        String[] nazvyAtributu = {"login", "subject", "timefrom", "timeto"};
-        int[] idAtributu = {R.id.eventLogin, R.id.eventSubject, R.id.eventTime};
+        String[] nazvyAtributu = {"login", "subject", "timefrom", "timeto", "date"};
+        int[] idAtributu = {R.id.eventLogin, R.id.eventSubject, R.id.eventTime, R.id.eventTimeTo, R.id.eventDate};
         SimpleAdapter adapter = new SimpleAdapter
                 (this, getListAdapterData(fabionEvents),
                         R.layout.event_list_item, nazvyAtributu, idAtributu);
@@ -152,6 +159,7 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
             polozkyMap.put("subject", fEvent.getSubject());
             polozkyMap.put("timefrom", fEvent.getTimeFrom());
             polozkyMap.put("timeto", fEvent.getTimeTo());
+            polozkyMap.put("date", String.format("%d.%d.%d", fEvent.getDay(), fEvent.getMonth(), fEvent.getYear()));
             list.add(polozkyMap);
         }
         return list;
@@ -166,8 +174,7 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
             if (result.equalsIgnoreCase("ok")) {
                 setResult(RESULT_OK);
                 loadData();
-            }
-            else {
+            } else {
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(new Runnable() {
                     public void run() {

@@ -1,18 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical" >
-<TextView android:id="@+id/eventLogin"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    style="@android:style/TextAppearance.Large"/>
-<TextView android:id="@+id/eventSubject"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    style="@android:style/TextAppearance.Small"/>
-<TextView android:id="@+id/eventTime"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    style="@android:style/TextAppearance.Small"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/eventLogin"
+        style="@android:style/TextAppearance.Large"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        />
+
+    <TextView
+        android:id="@+id/eventSubject"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Subject"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/eventDate"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="date"
+            />
+
+        <android.support.v4.widget.Space
+            android:layout_width="5dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/eventTime"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="timeFrom"
+            />
+
+        <TextView
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - " />
+
+        <TextView
+            android:id="@+id/eventTimeTo"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:text="timeTo"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

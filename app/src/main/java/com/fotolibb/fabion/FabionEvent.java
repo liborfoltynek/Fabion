@@ -51,9 +51,7 @@ public class FabionEvent implements Parcelable {
         return TimeTo;
     }
 
-    public int getDay() {
-        return Day;
-    }
+    public int getDay() {return Day; }
 
     public int getMonth() {
         return Month;
