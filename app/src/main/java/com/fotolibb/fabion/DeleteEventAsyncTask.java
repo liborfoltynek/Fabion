@@ -31,9 +31,9 @@ public class DeleteEventAsyncTask
     private String password;
     private String eventId;
     private String servicesUrl;
-    private OneDayEventsViewActivity callingActivity;
+    private IStringConsumer callingActivity;
 
-    public DeleteEventAsyncTask(String login, String passwordHash, String servicesUrl, String eventId, OneDayEventsViewActivity callingActivity) {
+    public DeleteEventAsyncTask(String login, String passwordHash, String servicesUrl, String eventId, IStringConsumer callingActivity) {
         this.login = login;
         this.password = passwordHash;
         this.eventId = eventId;

@@ -9,3 +9,8 @@ import java.util.ArrayList;
 interface IEventsConsumer {
     void ProcessData(ArrayList<FabionEvent> events);
 }
+
+
+interface IStringConsumer {
+    void ProcessData(String result);
+}

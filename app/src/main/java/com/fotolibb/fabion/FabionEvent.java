@@ -31,6 +31,43 @@ public class FabionEvent implements Parcelable {
     private String TimeTo;
     private int Day;
     private int Month;
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    public void setLogin(String login) {
+        Login = login;
+    }
+
+    public void setTimeFrom(String timeFrom) {
+        TimeFrom = timeFrom;
+    }
+
+    public void setTimeTo(String timeTo) {
+        TimeTo = timeTo;
+    }
+
+    public void setDay(int day) {
+        Day = day;
+    }
+
+    public void setMonth(int month) {
+        Month = month;
+    }
+
+    public void setYear(int year) {
+        Year = year;
+    }
+
+    public void setSubject(String subject) {
+        Subject = subject;
+    }
+
+    public void setNote(String note) {
+        Note = note;
+    }
+
     private int Year;
     private String Subject;
     private String Note;
@@ -96,8 +133,6 @@ public class FabionEvent implements Parcelable {
         Note = note;
     }
 
-
-
     public FabionEvent(JSONObject jsonEventData) throws JSONException {
         Id = jsonEventData.getInt("id");
         Day = jsonEventData.getInt("day");
@@ -154,5 +189,9 @@ public class FabionEvent implements Parcelable {
         parcel.writeInt(Year);
         parcel.writeString(Subject);
         parcel.writeString(Note);
+    }
+
+    public int getImage() {
+        return R.drawable.photographer;
     }
 }

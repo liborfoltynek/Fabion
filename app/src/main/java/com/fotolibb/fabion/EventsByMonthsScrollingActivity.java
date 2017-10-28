@@ -120,7 +120,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             TextView aa = (TextView) b.getChildAt(0);
             Integer day = Integer.parseInt(aa.getText().toString());
 
-            Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity.class);
+            Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity2.class);
             intent.putExtra("FUser", fabionUser);
             intent.putExtra("Day", day);
             intent.putExtra("Month", month + 1);
