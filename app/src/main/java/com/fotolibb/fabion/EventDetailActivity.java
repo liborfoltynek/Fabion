@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +38,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
 
     private int day, month, year;
 
-    private int TIME_PICKER_THEME = 3;
+    private int TIME_PICKER_THEME = 0;
     private int TIME_FROM = 0;
     private int TIME_TO = 1;
 
@@ -225,12 +227,18 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         Toast.makeText(getApplicationContext(), R.string.MSG_WARN_TIME_MUST_BE_OF_HALF_HOUR, Toast.LENGTH_SHORT).show();
     }
 
-    public void ProcessData(String result) {
+    public void ProcessData(final String result) {
         if (result.equalsIgnoreCase("ok")) {
             setResult(RESULT_OK);
             finish();
+        } else {
+
+            Handler h = new Handler(Looper.getMainLooper());
+            h.post(new Runnable() {
+                public void run() {
+                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                }
+            });
         }
-        else
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
     }
 }

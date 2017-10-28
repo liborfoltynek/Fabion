@@ -44,7 +44,7 @@ public class UpdateEventAsyncTask
         InputStream in = null;
 
         try {
-            String mainUrl = servicesUrl + "event.php?action=u&l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&";
+            String mainUrl = servicesUrl + "event.php?action=u&l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d";
             URL url = new URL(String.format(mainUrl, login, password,
                     fabionEvent.getId(),
                     fabionEvent.getTimeFrom(),
