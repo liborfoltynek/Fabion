@@ -106,7 +106,7 @@ public class FabionEventBaseAdapter
         public void setUserImage(Bitmap bmp) {
             if (!imageUserSet) {
                 imageUser.setImageBitmap(bmp);
-                imageUserSet = true;
+             //   imageUserSet = true;
             }
         }
     }

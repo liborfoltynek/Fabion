@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity
         ((TextView) findViewById(R.id.userText)).setText("-");
         fabionUser = new FabionUser();
         setFabionUserInfoText();
+        Login();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
