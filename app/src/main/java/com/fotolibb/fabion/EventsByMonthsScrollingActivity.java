@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
@@ -116,16 +117,23 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     public void cellOnClick(View view) {
         try {
-            LinearLayout b = (LinearLayout) view;
-            TextView aa = (TextView) b.getChildAt(0);
-            Integer day = Integer.parseInt(aa.getText().toString());
 
-            Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity2.class);
-            intent.putExtra("FUser", fabionUser);
-            intent.putExtra("Day", day);
-            intent.putExtra("Month", month + 1);
-            intent.putExtra("Year", year);
-            startActivityForResult(intent, 2);
+            if (fabionUser.isLogged()) {
+
+                LinearLayout b = (LinearLayout) view;
+                TextView aa = (TextView) b.getChildAt(0);
+                Integer day = Integer.parseInt(aa.getText().toString());
+
+                Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity2.class);
+                intent.putExtra("FUser", fabionUser);
+                intent.putExtra("Day", day);
+                intent.putExtra("Month", month + 1);
+                intent.putExtra("Year", year);
+                startActivityForResult(intent, 2);
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Pro zobrazení detailů se musíte přihlásit", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (Exception ex) {
             Log.e("EX", ex.getMessage());

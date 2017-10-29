@@ -98,7 +98,15 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
-            ((EditText) findViewById(R.id.eventDetailEditNote)).setText(fabionEvent.getNote());
+
+            if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb"))
+            {
+                ((EditText) findViewById(R.id.eventDetailEditNote)).setText(fabionEvent.getNote());
+            }
+            else {
+                ((EditText) findViewById(R.id.eventDetailEditNote)).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.eventDetailEditNoteLabel)).setVisibility(View.GONE);
+            }
             ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%d.%d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
         } catch (Exception ex) {
             Log.e("EX", ex.getLocalizedMessage());

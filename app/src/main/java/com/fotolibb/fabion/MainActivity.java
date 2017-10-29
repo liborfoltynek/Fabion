@@ -117,9 +117,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void MonthView(MainActivity mainActivity) {
-        Intent intent = new Intent(getApplicationContext(), EventsByMonthsScrollingActivity.class);
-        intent.putExtra("FUser", fabionUser);
-        startActivity(intent);
+        if (fabionUser.isLogged()) {
+            Intent intent = new Intent(getApplicationContext(), EventsByMonthsScrollingActivity.class);
+            intent.putExtra("FUser", fabionUser);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Pro zobrazení detailů se musíte přihlásit", Toast.LENGTH_SHORT).show();
+        }
     }
     private void Login()
     {

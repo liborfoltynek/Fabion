@@ -2,9 +2,12 @@ package com.fotolibb.fabion;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +15,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
+import static android.util.Base64.DEFAULT;
 
 /**
  * Created by Libb on 28.10.2017.
@@ -61,8 +66,8 @@ public class FabionEventBaseAdapter
         hld.txtLogin.setText(polozka.getLogin());
 
         String u = String.format(serviceUrl, polozka.getLogin());
-        hld.imageUser.setImageResource(R.drawable.photographer);
-        new WebImgDownloader(hld.imageUser).execute(new String[]{u});
+        //hld.imageUser.setImageResource(R.drawable.photographer);
+        new DownloadImageAsyncTask(hld).execute(new String[]{u});
 
         if (polozka.getLogin().equals(fabionUser.Login)) {
             hld.imageDelete.setVisibility(View.VISIBLE);
@@ -90,33 +95,70 @@ public class FabionEventBaseAdapter
     }
 
     private class ViewHolder {
-        public ImageView imageUser;
+        ImageView imageUser;
         ImageView imageDelete;
         TextView txtSubject;
         TextView txtLogin;
         TextView txtTime;
+
+        private Boolean imageUserSet = false;
+
+        public void setUserImage(Bitmap bmp) {
+            if (!imageUserSet) {
+                imageUser.setImageBitmap(bmp);
+                imageUserSet = true;
+            }
+        }
     }
 
-    private class WebImgDownloader extends AsyncTask<String, Void, Bitmap> {
+    private class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
-        ImageView imageView;
+        ViewHolder viewHolder;
+        private SharedPreferences mPrefs;
 
-        public WebImgDownloader(ImageView iv) {
-            imageView = iv;
+        public DownloadImageAsyncTask(ViewHolder vh) {
+            viewHolder = vh;
         }
 
         @Override
         protected Bitmap doInBackground(String... urls) {
             Bitmap bmp = null;
             for (String url : urls) {
-                bmp = nactiBmp(url);
+                bmp = LoadBmpFromSharedPrefs(url);
+
+                if (bmp == null) {
+                    bmp = nactiBmp(url);
+                }
             }
+            return bmp;
+        }
+
+        private void SaveBmpToSharedPrefs(String url, Bitmap bmp) {
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String encoded = Base64.encodeToString(b, DEFAULT);
+            prefsEditor.putString(url, encoded);
+            prefsEditor.apply();
+        }
+
+        private Bitmap LoadBmpFromSharedPrefs(String url) {
+            Bitmap bmp;
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String encoded = mPrefs.getString(url, "");
+            if (encoded.isEmpty())
+                return null;
+
+            byte[] imageAsBytes = Base64.decode(encoded.getBytes(), DEFAULT);
+            bmp = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
             return bmp;
         }
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
+            viewHolder.setUserImage(result);
         }
 
         private Bitmap nactiBmp(String url) {
@@ -131,6 +173,7 @@ public class FabionEventBaseAdapter
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+            SaveBmpToSharedPrefs(url, bmp);
             return bmp;
         }
 
@@ -151,5 +194,6 @@ public class FabionEventBaseAdapter
             return stream;
         }
     }
+
 
 }

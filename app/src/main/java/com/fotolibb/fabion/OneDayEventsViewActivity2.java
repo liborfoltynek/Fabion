@@ -164,7 +164,7 @@ public class OneDayEventsViewActivity2 extends AppCompatActivity implements Adap
         FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
-        registerForContextMenu(listView);
+        //registerForContextMenu(listView);
     }
 
     @Override

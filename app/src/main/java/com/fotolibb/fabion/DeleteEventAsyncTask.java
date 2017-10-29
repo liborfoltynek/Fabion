@@ -53,7 +53,7 @@ public class DeleteEventAsyncTask
             in = new BufferedInputStream(conn.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"), 8);
             StringBuilder sb = new StringBuilder();
-            String radek = null;
+            String radek;
 
             while ((radek = reader.readLine()) != null) {
                 sb.append(radek + "\n");
