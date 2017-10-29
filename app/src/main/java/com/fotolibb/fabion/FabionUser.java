@@ -104,7 +104,7 @@ public class FabionUser implements Parcelable {
 
             return sb.toString();
         } else {
-            return "";
+            return "Jste odhlášen, prosím přihlašte se.";
         }
     }
 }

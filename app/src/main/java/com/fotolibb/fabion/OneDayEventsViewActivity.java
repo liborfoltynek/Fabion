@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OneDayEventsViewActivity extends ListActivity implements IEventsConsumer {
+public class OneDayEventsViewActivity extends ListActivity implements IEventsConsumer, AdapterView.OnItemClickListener, IStringConsumer {
     private static final int ITEM_ID_DELETE = Menu.FIRST + 1;
     private static final int ITEM_ID_BACK = Menu.FIRST + 2;
     private int mDay;
@@ -34,12 +35,15 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     private String URL;
     private ArrayList<FabionEvent> fabionEvents;
     private OneDayEventsViewActivity thisActivity;
+    private ListView listView;
 
     private int RC_UPDATE = 443;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_one_day_events_view2);
+
         thisActivity = this;
         final Calendar c = Calendar.getInstance();
         mDay = c.get(Calendar.DAY_OF_MONTH);
@@ -66,23 +70,13 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.fabionEvents = events;
-        setListAdapter(getListAdapter(events));
-        registerForContextMenu(getListView());
+String url = getResources().getString(R.string.url_fabion_service) ;
+        listView = (ListView) findViewById(R.id.list);
+        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
 
-        ListView lv = getListView();
-        lv.setTextFilterEnabled(true);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
-                FabionEvent fe = (FabionEvent) fabionEvents.toArray()[position];
-                intent.putExtra("FUser", fabionUser);
-                intent.putExtra("FEvent", fe);
-                startActivityForResult(intent, RC_UPDATE);
-            }
-        });
+        registerForContextMenu(listView);
     }
 
     @Override
@@ -192,6 +186,15 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
         } catch (Exception ex) {
             Log.e("EX", ex.getMessage());
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+        FabionEvent fe = (FabionEvent) fabionEvents.toArray()[position];
+        intent.putExtra("FUser", fabionUser);
+        intent.putExtra("FEvent", fe);
+        startActivityForResult(intent, RC_UPDATE);
     }
 }
 

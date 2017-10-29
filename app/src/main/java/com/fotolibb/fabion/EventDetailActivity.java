@@ -86,7 +86,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
 
                         //findViewById(R.id.eventDetailLogin).setEnabled(isEnabled);
                         findViewById(R.id.eventDetailSubject).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailNote).setEnabled(isEnabled);
+                        findViewById(R.id.eventDetailEditNote).setEnabled(isEnabled);
                         findViewById(R.id.eventDetailTimeFrom).setEnabled(isEnabled);
                         findViewById(R.id.eventDetailTimeTo).setEnabled(isEnabled);
                         findViewById(R.id.eventDetailDate).setEnabled(isEnabled);
@@ -98,7 +98,15 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
-            ((EditText) findViewById(R.id.eventDetailNote)).setText(fabionEvent.getNote());
+
+            if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb"))
+            {
+                ((EditText) findViewById(R.id.eventDetailEditNote)).setText(fabionEvent.getNote());
+            }
+            else {
+                ((EditText) findViewById(R.id.eventDetailEditNote)).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.eventDetailEditNoteLabel)).setVisibility(View.GONE);
+            }
             ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%d.%d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
         } catch (Exception ex) {
             Log.e("EX", ex.getLocalizedMessage());
@@ -111,7 +119,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 fabionEvent.getId(),
                 ((EditText) findViewById(R.id.eventDetailLogin)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString(),
-                ((EditText) findViewById(R.id.eventDetailNote)).getText().toString(),
+                ((EditText) findViewById(R.id.eventDetailEditNote)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailTimeFrom)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailTimeTo)).getText().toString(),
                 day,

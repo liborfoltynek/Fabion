@@ -31,9 +31,9 @@ public class DeleteEventAsyncTask
     private String password;
     private String eventId;
     private String servicesUrl;
-    private OneDayEventsViewActivity callingActivity;
+    private IStringConsumer callingActivity;
 
-    public DeleteEventAsyncTask(String login, String passwordHash, String servicesUrl, String eventId, OneDayEventsViewActivity callingActivity) {
+    public DeleteEventAsyncTask(String login, String passwordHash, String servicesUrl, String eventId, IStringConsumer callingActivity) {
         this.login = login;
         this.password = passwordHash;
         this.eventId = eventId;
@@ -53,7 +53,7 @@ public class DeleteEventAsyncTask
             in = new BufferedInputStream(conn.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"), 8);
             StringBuilder sb = new StringBuilder();
-            String radek = null;
+            String radek;
 
             while ((radek = reader.readLine()) != null) {
                 sb.append(radek + "\n");

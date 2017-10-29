@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private EventsByMonthsScrollingActivity mainActivity;
     private ArrayList<FabionEvent> events;
     private ViewFlipper flipper;
-    private CollapsingToolbarLayout toolbarLayout;
+    //private CollapsingToolbarLayout toolbarLayout;
     private int nStav = 1;
     private int delta = 1;
 
@@ -43,12 +44,12 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_by_months_scrolling);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         mainActivity = this;
         flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
-        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+      //  toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMonth);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +69,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
         tableLayout1 = flipper.findViewById(R.id.calendarTableScroll1);
         tableLayout2 = flipper.findViewById(R.id.calendarTableScroll2);
-        toolbarLayout.setTitle(String.format("%d/%d [%s]", month + 1, year, fabionUser.isLogged() ? fabionUser.Login : ""));
+        this.setTitle(String.format("%d/%d [%s]", month + 1, year, fabionUser.isLogged() ? fabionUser.Login : ""));
 
         gestDetector = new GestureDetector(this,
                 new GestureDetector.SimpleOnGestureListener() {
@@ -116,16 +117,23 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     public void cellOnClick(View view) {
         try {
-            LinearLayout b = (LinearLayout) view;
-            TextView aa = (TextView) b.getChildAt(0);
-            Integer day = Integer.parseInt(aa.getText().toString());
 
-            Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity.class);
-            intent.putExtra("FUser", fabionUser);
-            intent.putExtra("Day", day);
-            intent.putExtra("Month", month + 1);
-            intent.putExtra("Year", year);
-            startActivityForResult(intent, 2);
+            if (fabionUser.isLogged()) {
+
+                LinearLayout b = (LinearLayout) view;
+                TextView aa = (TextView) b.getChildAt(0);
+                Integer day = Integer.parseInt(aa.getText().toString());
+
+                Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity2.class);
+                intent.putExtra("FUser", fabionUser);
+                intent.putExtra("Day", day);
+                intent.putExtra("Month", month + 1);
+                intent.putExtra("Year", year);
+                startActivityForResult(intent, 2);
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Pro zobrazení detailů se musíte přihlásit", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (Exception ex) {
             Log.e("EX", ex.getMessage());
@@ -145,7 +153,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
 
-        toolbarLayout.setTitle(String.format("%d/%d %s", month + 1, year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
+        this.setTitle(String.format("%d/%d %s", month + 1, year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
 
         TableLayout tableLayout;
         if (nStav == 0)
