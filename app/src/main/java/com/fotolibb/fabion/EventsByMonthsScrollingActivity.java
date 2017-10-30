@@ -4,12 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -26,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer {
-
-
     private int month;
     private int year;
     private FabionUser fabionUser;
@@ -44,19 +39,18 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_by_months_scrolling);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         mainActivity = this;
         flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
-      //  toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMonth);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                PrepareNewEvent();
+
             }
         });
 
@@ -124,14 +118,13 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 TextView aa = (TextView) b.getChildAt(0);
                 Integer day = Integer.parseInt(aa.getText().toString());
 
-                Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity2.class);
+                Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity.class);
                 intent.putExtra("FUser", fabionUser);
                 intent.putExtra("Day", day);
                 intent.putExtra("Month", month + 1);
                 intent.putExtra("Year", year);
-                startActivityForResult(intent, 2);
-            }
-            else {
+                startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+            } else {
                 Toast.makeText(getApplicationContext(), "Pro zobrazení detailů se musíte přihlásit", Toast.LENGTH_SHORT).show();
             }
 
@@ -142,14 +135,13 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 2 && resultCode == RESULT_OK)
-        {
+        if ((requestCode == Constants.RC_EVENT_UPDATE || requestCode == Constants.RC_EVENT_NEW) && resultCode == RESULT_OK) {
             delta = 0;
             new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, this).execute();
         }
     }
 
-        @Override
+    @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
 
@@ -287,5 +279,12 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             }
         }
         return sb.toString();
+    }
+
+    private void PrepareNewEvent() {
+        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+        intent.putExtra("FUser", fabionUser);
+        intent.putExtra("FEvent", FabionEvent.CreateNew(fabionUser));
+        startActivityForResult(intent, Constants.RC_EVENT_NEW);
     }
 }

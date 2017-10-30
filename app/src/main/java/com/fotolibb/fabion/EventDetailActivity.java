@@ -22,6 +22,8 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static android.view.View.GONE;
+
 public class EventDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FabionEvent fabionEvent;
@@ -66,7 +68,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
                 fab.setVisibility(View.VISIBLE);
             } else {
-                fab.setVisibility(View.GONE);
+                fab.setVisibility(GONE);
             }
 
             findViewsById();
@@ -76,21 +78,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onClick(View view) {
 
-                    Boolean isEnabled = !findViewById(R.id.eventDetailSubject).isEnabled();
-                    if (!fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
-                        Toast.makeText(getApplicationContext(), "Nelze editovat, co neni tvoje", Toast.LENGTH_LONG).show();
-                    } else {
-
-                        findViewById(R.id.eventDetailOK).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailOK).setVisibility(isEnabled ? View.VISIBLE : View.GONE);
-
-                        //findViewById(R.id.eventDetailLogin).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailSubject).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailEditNote).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailTimeFrom).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailTimeTo).setEnabled(isEnabled);
-                        findViewById(R.id.eventDetailDate).setEnabled(isEnabled);
-                    }
+                    SwitchEditMode();
                 }
             });
 
@@ -99,23 +87,50 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
 
-            if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb"))
-            {
+            if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb")) {
                 ((EditText) findViewById(R.id.eventDetailEditNote)).setText(fabionEvent.getNote());
-            }
-            else {
-                ((EditText) findViewById(R.id.eventDetailEditNote)).setVisibility(View.GONE);
-                ((TextView) findViewById(R.id.eventDetailEditNoteLabel)).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.eventDetailEditNote).setVisibility(GONE);
+                findViewById(R.id.eventDetailEditNoteLabel).setVisibility(GONE);
             }
             ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%d.%d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
+
+            if (fabionEvent.getId() == 0) {
+                SwitchEditMode(true);
+                fab.setVisibility(GONE);
+            }
+
         } catch (Exception ex) {
             Log.e("EX", ex.getLocalizedMessage());
+        }
+
+
+    }
+
+    private void SwitchEditMode() {
+        SwitchEditMode(!findViewById(R.id.eventDetailSubject).isEnabled());
+    }
+
+    private void SwitchEditMode(Boolean isEnabled) {
+
+        if (!fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
+            Toast.makeText(getApplicationContext(), "Nelze editovat, co neni tvoje", Toast.LENGTH_LONG).show();
+        } else {
+
+            findViewById(R.id.eventDetailOK).setEnabled(isEnabled);
+            findViewById(R.id.eventDetailOK).setVisibility(isEnabled ? View.VISIBLE : GONE);
+
+            findViewById(R.id.eventDetailSubject).setEnabled(isEnabled);
+            findViewById(R.id.eventDetailEditNote).setEnabled(isEnabled);
+            findViewById(R.id.eventDetailTimeFrom).setEnabled(isEnabled);
+            findViewById(R.id.eventDetailTimeTo).setEnabled(isEnabled);
+            findViewById(R.id.eventDetailDate).setEnabled(isEnabled);
         }
     }
 
     // OK, update
     public void onEventDetailButtonClick(View v) {
-        FabionEvent f = new FabionEvent(
+        FabionEvent updatedEvent = new FabionEvent(
                 fabionEvent.getId(),
                 ((EditText) findViewById(R.id.eventDetailLogin)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString(),
@@ -126,7 +141,51 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 month,
                 year);
 
-        new UpdateEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), f, this).execute();
+        if (validateEvent(updatedEvent)) {
+            new UpdateEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), updatedEvent, this).execute();
+        }
+    }
+
+    private Boolean validateEvent(FabionEvent fe) {
+        StringBuilder sb = new StringBuilder();
+        Boolean issue = false;
+
+        if (fe.getLogin().isEmpty()) {
+            sb.append("Není vyplněn login");
+            issue = true;
+        }
+
+        if (fe.getSubject().isEmpty()) {
+            if (issue) {
+                sb.append("\n");
+            }
+            sb.append("Popis musí být vyplněn");
+            issue = true;
+        }
+        Calendar now = Calendar.getInstance();
+        Calendar ev = Calendar.getInstance();
+        ev.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        ev.set(Calendar.MONTH, fe.getMonth() - 1);
+        ev.set(Calendar.YEAR, fe.getYear());
+
+        Integer h = Integer.parseInt(fe.getTimeFrom().substring(0, 2));
+        Integer m = Integer.parseInt(fe.getTimeFrom().substring(3, 5));
+        ev.set(Calendar.HOUR_OF_DAY, h);
+        ev.set(Calendar.MINUTE, m);
+        ev.set(Calendar.SECOND, 0);
+
+        if (ev.before(now)) {
+            if (issue) {
+                sb.append("\n");
+            }
+            sb.append("Nelze nastavit datum do minulosti");
+            issue = true;
+        }
+        if (issue) {
+            Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        return !issue;
     }
 
     private void findViewsById() {
@@ -153,7 +212,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             public void onDateSet(DatePicker view, int yearInput, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(yearInput, monthOfYear, dayOfMonth);
-                month = monthOfYear+1;
+                month = monthOfYear + 1;
                 year = yearInput;
                 day = dayOfMonth;
                 eventDetailDateTextView.setText(dateFormatter.format(newDate.getTime()));
@@ -188,33 +247,38 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View view) {
         // datum
         if (view == eventDetailDateTextView) {
-            datePickerDialog.updateDate(fabionEvent.getYear(), fabionEvent.getMonth() - 1, fabionEvent.getDay());
+            String dateStr = ((TextView) findViewById(R.id.eventDetailDate)).getText().toString();
+            int day = Integer.parseInt(dateStr.substring(0, 2));
+            int month = Integer.parseInt(dateStr.substring(3, 5));
+            int year = Integer.parseInt(dateStr.substring(6, 10));
+            datePickerDialog.updateDate(year, month - 1, day);
             datePickerDialog.show();
         }
         // time from
         if (view == eventTimeFromTextView) {
-            Calendar c = getTimeFromFabionEvent(fabionEvent, TIME_FROM);
+
+            String timeStr = ((TextView) findViewById(R.id.eventDetailTimeFrom)).getText().toString();
+            Calendar c = getTimeFromFabionEvent(timeStr);
             timePickerDialogFrom.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogFrom.show();
         }
         // time to
         if (view == eventTimeToTextView) {
-            Calendar c = getTimeFromFabionEvent(fabionEvent, TIME_TO);
+            String timeStr = ((TextView) findViewById(R.id.eventDetailTimeTo)).getText().toString();
+            Calendar c = getTimeFromFabionEvent(timeStr);
             timePickerDialogTo.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogTo.show();
         }
         // OK (update)
-        if (view == eventDetailButtonOK)
-        {
+        if (view == eventDetailButtonOK) {
             onEventDetailButtonClick(view);
         }
     }
 
-    private Calendar getTimeFromFabionEvent(FabionEvent f, int seq) {
+    private Calendar getTimeFromFabionEvent(String timeStr) {
         Calendar c = Calendar.getInstance();
-        String t = seq == 0 ? f.getTimeFrom() : f.getTimeTo();
-        Integer h = Integer.parseInt(t.substring(0, 2));
-        Integer m = Integer.parseInt(t.substring(3, 5));
+        Integer h = Integer.parseInt(timeStr.substring(0, 2));
+        Integer m = Integer.parseInt(timeStr.substring(3, 5));
         c.set(Calendar.HOUR_OF_DAY, h);
         c.set(Calendar.MINUTE, m);
         c.set(Calendar.SECOND, 0);

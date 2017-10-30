@@ -1,50 +1,46 @@
 package com.fotolibb.fabion;
 
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class OneDayEventsViewActivity extends ListActivity implements IEventsConsumer, AdapterView.OnItemClickListener, IStringConsumer {
+public class OneDayEventsViewActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, IEventsConsumer, IStringConsumer {
+
     private static final int ITEM_ID_DELETE = Menu.FIRST + 1;
     private static final int ITEM_ID_BACK = Menu.FIRST + 2;
+    ArrayList<FabionEvent> fabionEvents;
     private int mDay;
     private int mMonth;
     private int mYear;
     private FabionUser fabionUser;
     private String URL;
-    private ArrayList<FabionEvent> fabionEvents;
+
     private OneDayEventsViewActivity thisActivity;
     private ListView listView;
-
-    private int RC_UPDATE = 443;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_day_events_view2);
-
+        fabionEvents = new ArrayList<FabionEvent>();
         thisActivity = this;
+
         final Calendar c = Calendar.getInstance();
         mDay = c.get(Calendar.DAY_OF_MONTH);
         mMonth = c.get(Calendar.MONTH) + 1;
@@ -68,27 +64,15 @@ public class OneDayEventsViewActivity extends ListActivity implements IEventsCon
     }
 
     @Override
-    public void ProcessData(ArrayList<FabionEvent> events) {
-        this.fabionEvents = events;
-String url = getResources().getString(R.string.url_fabion_service) ;
-        listView = (ListView) findViewById(R.id.list);
-        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
-
-        registerForContextMenu(listView);
-    }
-
-    @Override
     public void onCreateContextMenu(ContextMenu menu, View view,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-        if (view.getId() == this.getListView().getId()) {
+        if (view.getId() == listView.getId()) {
             ListView lv = (ListView) view;
 
-            HashMap hashMap = (HashMap) lv.getItemAtPosition(((AdapterView.AdapterContextMenuInfo) menuInfo).position);
-            final String login = (String) hashMap.get("login");
+            FabionEvent fEvent = (FabionEvent) lv.getItemAtPosition(((AdapterView.AdapterContextMenuInfo) menuInfo).position);
+
             menu.setHeaderTitle("Funkce");
-            if (login.equalsIgnoreCase(fabionUser.Login)) {
+            if (fEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
                 menu.add(Menu.NONE, ITEM_ID_DELETE, Menu.NONE, "Smazat");
             }
             menu.add(Menu.NONE, ITEM_ID_BACK, Menu.NONE, "Zpět");
@@ -100,28 +84,8 @@ String url = getResources().getString(R.string.url_fabion_service) ;
         switch (item.getItemId()) {
             case ITEM_ID_DELETE:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                ListView lv = getListView();
-                HashMap hashMap = (HashMap) lv.getItemAtPosition(info.position);
-                final String eventId = (String) hashMap.get("id");
-                final String subj = (String) hashMap.get("subject");
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Skutečne smazat?\n" + subj);
-                builder.setCancelable(false);
-                builder.setPositiveButton("Ano",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                deleteEvent(eventId);
-                            }
-                        });
-                builder.setNegativeButton("Ne",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+                final FabionEvent fEvent = (FabionEvent) listView.getItemAtPosition(info.position);
+                deleteEvent(fEvent);
                 return true;
             case ITEM_ID_BACK:
                 finish();
@@ -131,32 +95,72 @@ String url = getResources().getString(R.string.url_fabion_service) ;
         }
     }
 
+    private void deleteEvent(final FabionEvent fEvent) {
+        deleteEvent(fEvent, null);
+    }
+
+    private void deleteEvent(final FabionEvent fEvent, final ImageView imView) {
+
+        if (!validateEvent(fEvent)) {
+            if (imView != null) {
+                imView.setImageResource(R.drawable.delete_bw);
+            }
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Skutečne smazat?\n" + fEvent.getSubject());
+        builder.setCancelable(false);
+        builder.setPositiveButton("Ano",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteEvent(Integer.toString(fEvent.getId()));
+                    }
+                });
+        builder.setNegativeButton("Ne",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        if (imView != null) {
+                            imView.setImageResource(R.drawable.delete_bw);
+                        }
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private Boolean validateEvent(FabionEvent fe) {
+        StringBuilder sb = new StringBuilder();
+        Boolean issue = false;
+
+        Calendar now = Calendar.getInstance();
+        Calendar ev = Calendar.getInstance();
+        ev.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        ev.set(Calendar.MONTH, fe.getMonth() - 1);
+        ev.set(Calendar.YEAR, fe.getYear());
+
+        Integer h = Integer.parseInt(fe.getTimeFrom().substring(0, 2));
+        Integer m = Integer.parseInt(fe.getTimeFrom().substring(3, 5));
+        ev.set(Calendar.HOUR_OF_DAY, h);
+        ev.set(Calendar.MINUTE, m);
+        ev.set(Calendar.SECOND, 0);
+
+        if (ev.before(now)) {
+            if (issue) {
+                sb.append("\n");
+            }
+            sb.append("Nelze mazat rezervace v minulosti");
+            issue = true;
+        }
+        if (issue) {
+            Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        return !issue;
+    }
+
     private void deleteEvent(String eventId) {
         new DeleteEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), eventId, thisActivity).execute();
-    }
-
-    private ListAdapter getListAdapter(List<FabionEvent> fabionEvents) {
-        String[] nazvyAtributu = {"login", "subject", "timefrom", "timeto", "date"};
-        int[] idAtributu = {R.id.eventLogin, R.id.eventSubject, R.id.eventTime, R.id.eventTimeTo, R.id.eventDate};
-        SimpleAdapter adapter = new SimpleAdapter
-                (this, getListAdapterData(fabionEvents),
-                        R.layout.event_list_item, nazvyAtributu, idAtributu);
-        return adapter;
-    }
-
-    private List<Map<String, ?>> getListAdapterData(List<FabionEvent> fabionEvents) {
-        List<Map<String, ?>> list = new ArrayList<Map<String, ?>>(fabionEvents.size());
-        for (FabionEvent fEvent : fabionEvents) {
-            Map<String, String> polozkyMap = new HashMap<String, String>();
-            polozkyMap.put("id", Integer.toString(fEvent.getId()));
-            polozkyMap.put("login", fEvent.getLogin());
-            polozkyMap.put("subject", fEvent.getSubject());
-            polozkyMap.put("timefrom", fEvent.getTimeFrom());
-            polozkyMap.put("timeto", fEvent.getTimeTo());
-            polozkyMap.put("date", String.format("%d.%d.%d", fEvent.getDay(), fEvent.getMonth(), fEvent.getYear()));
-            list.add(polozkyMap);
-        }
-        return list;
     }
 
     private void loadData() {
@@ -164,12 +168,42 @@ String url = getResources().getString(R.string.url_fabion_service) ;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == RC_UPDATE) && (resultCode == RESULT_OK)) {
+        if ((requestCode == Constants.RC_EVENT_UPDATE) && (resultCode == RESULT_OK)) {
             setResult(RESULT_OK);
             loadData();
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+        FabionEvent fe = fabionEvents.get(position);
+        intent.putExtra("FUser", fabionUser);
+        intent.putExtra("FEvent", fe);
+        startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+    }
+
+    public void onDeleteButtonClick(View v) {
+        ((ImageView) v).setImageResource(R.drawable.delete);
+        for (int i = 0; i < fabionEvents.size(); i++) {
+            if (Integer.toString(fabionEvents.get(i).getId()).equalsIgnoreCase((String) v.getContentDescription())) {
+                deleteEvent(fabionEvents.get(i), (ImageView) v);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void ProcessData(ArrayList<FabionEvent> events) {
+        fabionEvents = events;
+        listView = (ListView) findViewById(R.id.list);
+        String url = getResources().getString(R.string.url_fabion_service);
+        FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+    }
+
+    @Override
     public void ProcessData(final String result) {
         try {
             if (result.equalsIgnoreCase("ok")) {
@@ -187,14 +221,6 @@ String url = getResources().getString(R.string.url_fabion_service) ;
             Log.e("EX", ex.getMessage());
         }
     }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
-        FabionEvent fe = (FabionEvent) fabionEvents.toArray()[position];
-        intent.putExtra("FUser", fabionUser);
-        intent.putExtra("FEvent", fe);
-        startActivityForResult(intent, RC_UPDATE);
-    }
 }
+
 
