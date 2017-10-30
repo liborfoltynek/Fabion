@@ -26,7 +26,6 @@ import static android.R.attr.data;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    static int RO_LOGIN = 5698;
     private FabionUser fabionUser;
 
     @Override
@@ -40,8 +39,10 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, R.string.not_implemented, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, R.string.not_implemented, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+                Intent ii = new Intent(getApplicationContext(), TESTC.class);
+                startActivity(ii);
             }
         });
 
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             try {
                 Intent intent2 = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivityForResult(intent2, RO_LOGIN);
+                startActivityForResult(intent2, Constants.RO_LOGIN);
             } catch (Exception ex) {
                 Log.e("EX", ex.getMessage());
             }
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RO_LOGIN) {
+        if (requestCode == Constants.RO_LOGIN) {
             if (resultCode == RESULT_OK) {
                 if (data.hasExtra("FUser")) {
                     fabionUser = data.getParcelableExtra("FUser");

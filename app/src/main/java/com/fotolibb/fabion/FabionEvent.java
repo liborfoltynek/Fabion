@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+
 import static android.R.attr.id;
 
 /**
@@ -106,7 +108,15 @@ public class FabionEvent implements Parcelable {
         return Note;
     }
 
-    public FabionEvent() {
+
+    public static FabionEvent CreateNew(FabionUser fu) {
+        Calendar c = Calendar.getInstance();
+        int Day = c.get(Calendar.DAY_OF_MONTH);
+        int Month = c.get(Calendar.MONTH) + 1;
+        int Year = c.get(Calendar.YEAR);
+
+        return new FabionEvent(
+        0, fu.Login, "", "","18:00", "20:00",Day, Month, Year);
     }
 
     protected FabionEvent(Parcel in) {
