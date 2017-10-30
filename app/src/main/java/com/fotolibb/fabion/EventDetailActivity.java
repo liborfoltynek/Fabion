@@ -71,6 +71,15 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 fab.setVisibility(GONE);
             }
 
+            Calendar cEvent = Calendar.getInstance();
+            Calendar cNow = Calendar.getInstance();
+            cEvent.set(Calendar.YEAR, year);
+            cEvent.set(Calendar.MONTH, month - 1);
+            cEvent.set(Calendar.DAY_OF_MONTH, day);
+            if (cEvent.before(cNow)) {
+                fab.setVisibility(GONE);
+            }
+
             findViewsById();
             setDateTimeField();
 
@@ -98,13 +107,12 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (fabionEvent.getId() == 0) {
                 SwitchEditMode(true);
                 fab.setVisibility(GONE);
+                findViewById(R.id.eventDetailEditNote).requestFocus();
             }
 
         } catch (Exception ex) {
             Log.e("EX", ex.getLocalizedMessage());
         }
-
-
     }
 
     private void SwitchEditMode() {
@@ -163,24 +171,31 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             issue = true;
         }
         Calendar now = Calendar.getInstance();
-        Calendar ev = Calendar.getInstance();
-        ev.set(Calendar.DAY_OF_MONTH, fe.getDay());
-        ev.set(Calendar.MONTH, fe.getMonth() - 1);
-        ev.set(Calendar.YEAR, fe.getYear());
+        Calendar evFrom = Tools.getTime(fe.getTimeFrom());
+        Calendar evTo = Tools.getTime(fe.getTimeTo());
+        evFrom.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        evFrom.set(Calendar.MONTH, fe.getMonth() - 1);
+        evFrom.set(Calendar.YEAR, fe.getYear());
+        evTo.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        evTo.set(Calendar.MONTH, fe.getMonth() - 1);
+        evTo.set(Calendar.YEAR, fe.getYear());
 
-        Integer h = Integer.parseInt(fe.getTimeFrom().substring(0, 2));
-        Integer m = Integer.parseInt(fe.getTimeFrom().substring(3, 5));
-        ev.set(Calendar.HOUR_OF_DAY, h);
-        ev.set(Calendar.MINUTE, m);
-        ev.set(Calendar.SECOND, 0);
-
-        if (ev.before(now)) {
+        if (evFrom.before(now)) {
             if (issue) {
                 sb.append("\n");
             }
             sb.append("Nelze nastavit datum do minulosti");
             issue = true;
         }
+
+        if (!evFrom.before(evTo)) {
+            if (issue) {
+                sb.append("\n");
+            }
+            sb.append("Konec rezervace musí být později, než začátek");
+            issue = true;
+        }
+
         if (issue) {
             Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_SHORT).show();
         }
@@ -258,14 +273,14 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         if (view == eventTimeFromTextView) {
 
             String timeStr = ((TextView) findViewById(R.id.eventDetailTimeFrom)).getText().toString();
-            Calendar c = getTimeFromFabionEvent(timeStr);
+            Calendar c = getTimeFromString(timeStr);
             timePickerDialogFrom.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogFrom.show();
         }
         // time to
         if (view == eventTimeToTextView) {
             String timeStr = ((TextView) findViewById(R.id.eventDetailTimeTo)).getText().toString();
-            Calendar c = getTimeFromFabionEvent(timeStr);
+            Calendar c = getTimeFromString(timeStr);
             timePickerDialogTo.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogTo.show();
         }
@@ -275,14 +290,15 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private Calendar getTimeFromFabionEvent(String timeStr) {
-        Calendar c = Calendar.getInstance();
+    private Calendar getTimeFromString(String timeStr) {
+        return Tools.getTime(timeStr);
+        /*Calendar c = Calendar.getInstance();
         Integer h = Integer.parseInt(timeStr.substring(0, 2));
         Integer m = Integer.parseInt(timeStr.substring(3, 5));
         c.set(Calendar.HOUR_OF_DAY, h);
         c.set(Calendar.MINUTE, m);
         c.set(Calendar.SECOND, 0);
-        return c;
+        return c;*/
     }
 
     private void roundMinutes(Calendar c) {

@@ -40,13 +40,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 //Snackbar.make(view, R.string.not_implemented, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
                 Intent ii = new Intent(getApplicationContext(), TESTC.class);
                 startActivity(ii);
             }
         });
 
-        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_production));
+        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
