@@ -142,7 +142,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 year);
 
         if (validateEvent(updatedEvent)) {
-            new UpdateEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), updatedEvent, this).execute();
+            new UpdateEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, Constants.getUrlService(), updatedEvent, this).execute();
         }
     }
 
