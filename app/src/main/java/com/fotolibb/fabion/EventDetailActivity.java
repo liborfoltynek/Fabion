@@ -50,8 +50,8 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         try {
             setContentView(R.layout.activity_event_detail);
             setResult(RESULT_CANCELED);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+            //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            //setSupportActionBar(toolbar);
             dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //, Locale.forLanguageTag("CS"));
             timeFormatter = new SimpleDateFormat("HH:mm"); //, Locale.forLanguageTag("CS"));
 
