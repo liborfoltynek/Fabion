@@ -119,10 +119,9 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         SwitchEditMode(!findViewById(R.id.eventDetailSubject).isEnabled());
     }
 
-
     @Override
     public void onBackPressed() {
-        if (findViewById(R.id.eventDetailSubject).isEnabled()) {
+        if (findViewById(R.id.eventDetailSubject).isEnabled() && fabionEvent.getId() != 0) {
             findViewById(R.id.eventDetailOK).setVisibility(GONE);
             SwitchEditMode(false);
             fab.setVisibility(VISIBLE);

@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.i("EX", "onRestoreInstanceState");
-        FabionUser f = (FabionUser) savedInstanceState.getParcelable("FabUser");
+        FabionUser f = savedInstanceState.getParcelable("FabUser");
         if (f != null) {
             fabionUser = f;
         }
@@ -182,8 +182,7 @@ public class MainActivity extends AppCompatActivity
                 if (data.hasExtra("FUser")) {
                     fabionUser = data.getParcelableExtra("FUser");
                     setFabionUserInfoText();
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.openDrawer(Gravity.LEFT);
+                    MonthView(this);
                 }
             } else if (resultCode == RESULT_CANCELED) {
                 fabionUser = new FabionUser();
@@ -197,7 +196,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setFabionUserInfoText(FabionUser fu) {
-        if (fabionUser != null)
-        ((TextView) findViewById(R.id.userText)).setText(fu.toString());
+        if (fabionUser != null) {
+            ((TextView) findViewById(R.id.userText)).setText(fu.toString());
+        }
     }
 }

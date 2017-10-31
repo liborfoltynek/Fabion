@@ -19,7 +19,6 @@
         app:elevation="4dp"
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|right"
-        app:srcCompat="@drawable/add_new_event"
-        />
+        app:srcCompat="@drawable/add_new_event" />
 
 </android.support.design.widget.CoordinatorLayout>
