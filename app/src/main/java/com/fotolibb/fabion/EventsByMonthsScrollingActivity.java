@@ -12,7 +12,9 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -219,16 +221,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     lDay.setPadding(0, 0, 0, 0);
                     lDay.setLayoutParams(llp);
 
-                    ArrayList<TextView> texts = getDayText(day);
+                    ArrayList<View> texts = getDayText(day);
                     for (int i = 0; i < texts.size(); i++) {
-                        TextView tvReservations = texts.get(i);
-                        if (texts.get(i).getText().toString().equalsIgnoreCase(fabionUser.Login)) {
-                            tvReservations.setTextColor(Color.argb(255,99,99,255));
-                        }
-                        tvReservations.setTextSize(10);
-                        tvReservations.setPadding(6, 0, 0, 0);
-                        tvReservations.setGravity(Gravity.LEFT);
-                        lDay.addView(tvReservations);
+                            lDay.addView(texts.get(i));
                     }
                     l.addView(lDay);
                 }
@@ -274,17 +269,44 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         return t;
     }
 
-    private ArrayList<TextView> getDayText(int d) {
-        ArrayList<TextView> views = new ArrayList<TextView>();
+    private ArrayList<View> getDayText(int d) {
+        ArrayList<View> views = new ArrayList<View>();
         for (int i = 0; i < events.size(); i++) {
             if (events.get(i).getDay() == d) {
                 TextView t = new TextView(getApplicationContext());
                 if (fabionUser.isLogged()) {
-                    t.setText(((FabionEvent) events.toArray()[i]).getLogin());
+                    FabionEvent fe = events.get(i);
+                    t.setTextSize(11);
+                    t.setText(fe.getLogin());
+                    t.setPadding(3, 0, 0, 0);
+                    t.setGravity(Gravity.LEFT);
+                    if (fe.getLogin().equalsIgnoreCase(fabionUser.Login)) {
+                        t.setTextColor(Color.argb(255, 99, 99, 255));
+                    }
+                    views.add(t);
+
+                    TextView tt = new TextView(getApplicationContext());
+                    tt.setText(String.format("%s-%s",fe.getTimeFrom(), fe.getTimeTo()));
+                    tt.setTextSize(9);
+                    TextView ttt = new TextView(getApplicationContext());
+                    ttt.setText("  ");
+                    ttt.setGravity(Gravity.CENTER);
+                    ttt.setTextSize(9);
+                    ttt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                    LinearLayout sp = new LinearLayout(getApplicationContext());
+                    sp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,1));
+                    sp.setPadding(50,0,50,0);
+                    sp.setBackgroundColor(Color.BLACK);
+                    sp.setGravity(Gravity.CENTER);
+                    sp.addView(ttt);
+
+                    views.add(tt);
+                    views.add(sp);
                 } else {
                     t.setText("***");
+                    views.add(t);
                 }
-                views.add(t);
             }
         }
         return views;

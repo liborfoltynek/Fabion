@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -42,8 +43,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -53,12 +52,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        fabionUser = new FabionUser();
-        setFabionUserInfoText();
 
-        Login(false);
+
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -66,6 +62,37 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (fabionUser == null) {
+            fabionUser = new FabionUser();
+            Login(false);
+        }
+        setFabionUserInfoText();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
+        //outState.putCharSequence("UlozenyText", sText);
+        if (fabionUser != null) {
+            outState.putParcelable("FabUser", fabionUser);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.i("EX", "onRestoreInstanceState");
+        FabionUser f = (FabionUser) savedInstanceState.getParcelable("FabUser");
+        if (f != null) {
+            fabionUser = f;
         }
     }
 
@@ -170,6 +197,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setFabionUserInfoText(FabionUser fu) {
+        if (fabionUser != null)
         ((TextView) findViewById(R.id.userText)).setText(fu.toString());
     }
 }
