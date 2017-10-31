@@ -33,7 +33,6 @@ import java.util.Formatter;
 import java.util.Objects;
 
 import static android.support.constraint.R.id.parent;
-import static com.fotolibb.fabion.R.id.login;
 
 public class LoginActivity extends AppCompatActivity {
 
