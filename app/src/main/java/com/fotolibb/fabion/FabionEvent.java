@@ -114,9 +114,9 @@ public class FabionEvent implements Parcelable {
         int Day = c.get(Calendar.DAY_OF_MONTH);
         int Month = c.get(Calendar.MONTH) + 1;
         int Year = c.get(Calendar.YEAR);
-
+        String s = String.format("%s (%s)", fu.Name, fu.Login);
         return new FabionEvent(
-        0, fu.Login, "", "","18:00", "20:00",Day, Month, Year);
+        0, fu.Login, s, "","18:00", "20:00",Day, Month, Year);
     }
 
     protected FabionEvent(Parcel in) {

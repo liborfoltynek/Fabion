@@ -80,7 +80,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     year++;
                                 }
                                 nStav = nStav == 0 ? 1 : 0;
-                                new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
+                                new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                             }
 
                             if (rychlostX > 10.0f) {
@@ -91,7 +91,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     year--;
                                 }
                                 nStav = nStav == 0 ? 1 : 0;
-                                new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
+                                new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                             }
                         }
                         return true;
@@ -100,7 +100,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
         nStav = 0;
         delta = 0;
-        new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
     }
 
     @Override
@@ -137,7 +137,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == Constants.RC_EVENT_UPDATE || requestCode == Constants.RC_EVENT_NEW) && resultCode == RESULT_OK) {
             delta = 0;
-            new LoadDataByMonthsAsyncTask(month, year, getResources().getString(R.string.url_fabion_service) + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+            new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
         }
     }
 
@@ -212,12 +212,25 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     }
                     l.addView(tvDate);
 
-                    TextView tvReservations = new TextView(this);
-                    tvReservations.setText(getDayText(day));
-                    tvReservations.setTextSize(10);
-                    tvReservations.setPadding(2, 0, 0, 2);
-                    tvReservations.setGravity(Gravity.LEFT);
-                    l.addView(tvReservations);
+
+                    LinearLayout lDay = new LinearLayout(this);
+                    lDay.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                    lDay.setOrientation(LinearLayout.VERTICAL);
+                    lDay.setPadding(0, 0, 0, 0);
+                    lDay.setLayoutParams(llp);
+
+                    ArrayList<TextView> texts = getDayText(day);
+                    for (int i = 0; i < texts.size(); i++) {
+                        TextView tvReservations = texts.get(i);
+                        if (texts.get(i).getText().toString().equalsIgnoreCase(fabionUser.Login)) {
+                            tvReservations.setTextColor(Color.argb(255,99,99,255));
+                        }
+                        tvReservations.setTextSize(10);
+                        tvReservations.setPadding(6, 0, 0, 0);
+                        tvReservations.setGravity(Gravity.LEFT);
+                        lDay.addView(tvReservations);
+                    }
+                    l.addView(lDay);
                 }
 
                 day++;
@@ -261,24 +274,20 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         return t;
     }
 
-    private String getDayText(int d) {
-        StringBuilder sb = new StringBuilder();
-        boolean b = false;
-        for (int i = 0; i < events.toArray().length; i++) {
-            if (((FabionEvent) events.toArray()[i]).getDay() == d) {
-                if (b)
-                    sb.append("\n");
-                if (!b) {
-                    b = true;
-                }
+    private ArrayList<TextView> getDayText(int d) {
+        ArrayList<TextView> views = new ArrayList<TextView>();
+        for (int i = 0; i < events.size(); i++) {
+            if (events.get(i).getDay() == d) {
+                TextView t = new TextView(getApplicationContext());
                 if (fabionUser.isLogged()) {
-                    sb.append(((FabionEvent) events.toArray()[i]).getLogin());
+                    t.setText(((FabionEvent) events.toArray()[i]).getLogin());
                 } else {
-                    sb.append("***");
+                    t.setText("***");
                 }
+                views.add(t);
             }
         }
-        return sb.toString();
+        return views;
     }
 
     private void PrepareNewEvent() {

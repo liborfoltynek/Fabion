@@ -48,7 +48,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
 
         setResult(RESULT_CANCELED);
 
-        URL = getResources().getString(R.string.url_fabion_service) + "getday.php?d=%d&m=%d&y=%d";
+        URL = Constants.getUrlService() + "getday.php?d=%d&m=%d&y=%d";
         Intent i = getIntent();
         fabionUser = i.getExtras().getParcelable("FUser");
         int d = i.getExtras().getInt("Day");
@@ -160,7 +160,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
     }
 
     private void deleteEvent(String eventId) {
-        new DeleteEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, getResources().getString(R.string.url_fabion_service), eventId, thisActivity).execute();
+        new DeleteEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, Constants.getUrlService(), eventId, thisActivity).execute();
     }
 
     private void loadData() {
@@ -197,7 +197,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
     public void ProcessData(ArrayList<FabionEvent> events) {
         fabionEvents = events;
         listView = (ListView) findViewById(R.id.list);
-        String url = getResources().getString(R.string.url_fabion_service);
+        String url = Constants.getUrlService();
         FabionEventBaseAdapter adapter = new FabionEventBaseAdapter(this, events, fabionUser, url);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);

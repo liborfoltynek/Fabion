@@ -11,12 +11,12 @@
     <string name="action_sign_alreadylogged">Už jste přihlášen</string>
     <string name="not_implemented">Ještě není implementováno</string>
 
-    <string name="url_fabion_service1">http://atelier.fotolibb.com/services/</string>
-    <string name="url_fabion_service">http://temp.foltynek.cz/atelier/services/</string>
+    <string name="url_fabion_service_production">http://atelier.fotolibb.com/services/</string>
+    <string name="url_fabion_service_stage">http://temp.foltynek.cz/atelier/services/</string>
     <string name="title_activity_events_by_days_scroll">EventsByDaysScrollActivity</string>
     <string name="title_activity_events_by_months_scrolling">EventsByMonthsScrollingActivity
     </string>
-    <string name="title_activity_event_detail">EventDetailActivity</string>
+    <string name="title_activity_event_detail">Detail rezervace</string>
     <string name="MSG_WARN_TIME_MUST_BE_OF_HALF_HOUR">Čas musí být po půlhodinách!</string>
 
 </resources>

@@ -52,7 +52,7 @@ public class LoadDataLoginAsyncTask
         InputStream in = null;
 
         try {
-            String mainUrl = loginActivity.getResources().getString(R.string.url_fabion_service) + "trylogin.php?l=%s&p=%s";
+            String mainUrl = Constants.getUrlService() + "trylogin.php?l=%s&p=%s";
             URL url = new URL(String.format(mainUrl, login, password));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
