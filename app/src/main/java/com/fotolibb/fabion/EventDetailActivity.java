@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -23,13 +22,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class EventDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FabionEvent fabionEvent;
     private FabionUser fabionUser;
 
-    private TextView eventDateText;
+    private FloatingActionButton fab;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialogFrom, timePickerDialogTo;
     private SimpleDateFormat dateFormatter;
@@ -50,8 +50,8 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         try {
             setContentView(R.layout.activity_event_detail);
             setResult(RESULT_CANCELED);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+            //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            //setSupportActionBar(toolbar);
             dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //, Locale.forLanguageTag("CS"));
             timeFormatter = new SimpleDateFormat("HH:mm"); //, Locale.forLanguageTag("CS"));
 
@@ -63,7 +63,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             month = fabionEvent.getMonth();
             year = fabionEvent.getYear();
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab = (FloatingActionButton) findViewById(R.id.fab);
 
             if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
                 fab.setVisibility(View.VISIBLE);
@@ -86,15 +86,15 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     SwitchEditMode();
+                    fab.setVisibility(GONE);
                 }
             });
 
-            ((EditText) findViewById(R.id.eventDetailLogin)).setText(fabionEvent.getLogin());
             ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
+            ((EditText) findViewById(R.id.eventDetailSubject)).setHint(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
 
             if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb")) {
                 ((EditText) findViewById(R.id.eventDetailEditNote)).setText(fabionEvent.getNote());
@@ -119,6 +119,18 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         SwitchEditMode(!findViewById(R.id.eventDetailSubject).isEnabled());
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if (findViewById(R.id.eventDetailSubject).isEnabled()) {
+            findViewById(R.id.eventDetailOK).setVisibility(GONE);
+            SwitchEditMode(false);
+            fab.setVisibility(VISIBLE);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void SwitchEditMode(Boolean isEnabled) {
 
         if (!fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
@@ -140,7 +152,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     public void onEventDetailButtonClick(View v) {
         FabionEvent updatedEvent = new FabionEvent(
                 fabionEvent.getId(),
-                ((EditText) findViewById(R.id.eventDetailLogin)).getText().toString(),
+                fabionUser.Login,
                 ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailEditNote)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailTimeFrom)).getText().toString(),
@@ -167,8 +179,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (issue) {
                 sb.append("\n");
             }
-            sb.append("Popis musí být vyplněn");
-            issue = true;
+            fe.setSubject(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
         }
         Calendar now = Calendar.getInstance();
         Calendar evFrom = Tools.getTime(fe.getTimeFrom());

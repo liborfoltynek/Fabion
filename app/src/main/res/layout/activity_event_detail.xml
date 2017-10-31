@@ -1,48 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/include3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.fotolibb.fabion.EventDetailActivity">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Datum: " />
+
+    <EditText
+        android:id="@+id/eventDetailDate"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height"
-        android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_margin"
+        android:enabled="false"
+        android:text="" />
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Čas: " />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+        <EditText
+            android:id="@+id/eventDetailTimeFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:enabled="false"
+            android:focusable="false"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:text="" />
 
-    <include layout="@layout/content_event_detail"
-        android:id="@+id/include3" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text=" - " />
+
+        <EditText
+            android:id="@+id/eventDetailTimeTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_marginStart="@dimen/text_margin"
+            android:enabled="false"
+            android:focusable="false"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:text="" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Popis: " />
+
+    <EditText
+        android:id="@+id/eventDetailSubject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_margin"
+
+        android:enabled="false"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/eventDetailEditNoteLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Poznámka: " />
+
+    <EditText
+        android:id="@+id/eventDetailEditNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_margin"
+
+        android:enabled="false"
+        android:text="" />
+
+    <Button
+        android:id="@+id/eventDetailOK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="onClick"
+        android:text="OK"
+        android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@+id/include3"
         app:layout_anchorGravity="bottom|right"
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

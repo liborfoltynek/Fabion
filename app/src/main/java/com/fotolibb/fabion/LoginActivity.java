@@ -33,7 +33,6 @@ import java.util.Formatter;
 import java.util.Objects;
 
 import static android.support.constraint.R.id.parent;
-import static com.fotolibb.fabion.R.id.login;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -50,7 +49,12 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             } else {
                 setResult(RESULT_CANCELED);
-                Toast.makeText(getApplicationContext(), R.string.action_sign_unableLogin, Toast.LENGTH_SHORT).show();
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), R.string.action_sign_unableLogin, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         } catch (Exception ex) {
             Log.e("EX", ex.getMessage());
