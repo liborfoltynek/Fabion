@@ -84,6 +84,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
+            ((EditText) findViewById(R.id.eventDetailSubject)).setHint(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
 
             if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb")) {
                 ((EditText) findViewById(R.id.eventDetailEditNote)).setText(fabionEvent.getNote());
@@ -96,7 +97,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (fabionEvent.getId() == 0) {
                 SwitchEditMode(true);
                 fab.setVisibility(GONE);
-                ((EditText) findViewById(R.id.eventDetailSubject)).setText(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
             }
 
         } catch (Exception ex) {
@@ -156,8 +156,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (issue) {
                 sb.append("\n");
             }
-            sb.append("Popis musí být vyplněn");
-            issue = true;
+            fe.setSubject(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
         }
         Calendar now = Calendar.getInstance();
         Calendar ev = Calendar.getInstance();

@@ -30,7 +30,6 @@
             android:name=".EventDetailActivity"
             android:label="@string/title_activity_event_detail" />
         <activity android:name=".OneDayEventsViewActivity" />
-        <activity android:name=".TestLayout"></activity>
     </application>
 
 </manifest>
