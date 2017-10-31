@@ -91,7 +91,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 }
             });
 
-            ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
+            //((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
             ((EditText) findViewById(R.id.eventDetailSubject)).setHint(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));

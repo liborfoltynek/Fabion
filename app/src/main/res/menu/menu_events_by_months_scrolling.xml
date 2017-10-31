@@ -2,9 +2,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity">
+
+    <item
+        android:id="@+id/menuLogin"
+        android:icon="@drawable/ic_menu_share"
+        android:title="Přihlásit" />
+    <item
+        android:id="@+id/menuLogout"
+        android:icon="@drawable/ic_menu_send"
+        android:title="Odhlásit" />
+
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+
 </menu>

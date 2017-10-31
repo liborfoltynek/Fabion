@@ -17,6 +17,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static com.fotolibb.fabion.Constants.FAB_USER;
+import static com.fotolibb.fabion.Constants.RO_MONTHVIEW;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -82,15 +85,14 @@ public class MainActivity extends AppCompatActivity
         //Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
         //outState.putCharSequence("UlozenyText", sText);
         if (fabionUser != null) {
-            outState.putParcelable("FabUser", fabionUser);
+            outState.putParcelable(FAB_USER, fabionUser);
         }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.i("EX", "onRestoreInstanceState");
-        FabionUser f = savedInstanceState.getParcelable("FabUser");
+        FabionUser f = savedInstanceState.getParcelable(FAB_USER);
         if (f != null) {
             fabionUser = f;
         }
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         if (fabionUser.isLogged()) {
             Intent intent = new Intent(getApplicationContext(), EventsByMonthsScrollingActivity.class);
             intent.putExtra("FUser", fabionUser);
-            startActivity(intent);
+            startActivityForResult(intent, RO_MONTHVIEW);
         } else {
             Toast.makeText(getApplicationContext(), "Pro zobrazení detailů se musíte přihlásit", Toast.LENGTH_SHORT).show();
         }
@@ -170,10 +172,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void Logout() {
-        ((TextView) findViewById(R.id.userText)).setText("-");
-        fabionUser = new FabionUser();
-        setFabionUserInfoText();
-        Login();
+        if (fabionUser.isLogged()) {
+            ((TextView) findViewById(R.id.userText)).setText("-");
+            fabionUser = new FabionUser();
+            setFabionUserInfoText();
+            Login();
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -187,6 +191,10 @@ public class MainActivity extends AppCompatActivity
             } else if (resultCode == RESULT_CANCELED) {
                 fabionUser = new FabionUser();
                 setFabionUserInfoText();
+            }
+        } else if (requestCode == RO_MONTHVIEW) {
+            if (data != null) {
+                fabionUser = data.getParcelableExtra("FUser");
             }
         }
     }

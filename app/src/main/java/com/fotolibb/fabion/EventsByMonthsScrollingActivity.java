@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,6 +108,56 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.menuLogin) {
+            Login();
+        } else if (id == R.id.menuLogout) {
+            Logout();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void Login() {
+        Login(true);
+    }
+
+    private void Login(Boolean showAlreadyLoggedMessage) {
+        if (fabionUser.isLogged() && showAlreadyLoggedMessage) {
+            Toast.makeText(this, R.string.action_sign_alreadylogged, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                Intent intent2 = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivityForResult(intent2, Constants.RO_LOGIN);
+            } catch (Exception ex) {
+                Log.e("EX", ex.getMessage());
+            }
+        }
+    }
+
+    private void Logout() {
+        fabionUser = new FabionUser();
+        Login();
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         super.dispatchTouchEvent(ev);
         return gestDetector.onTouchEvent(ev);
@@ -139,7 +191,21 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == Constants.RC_EVENT_UPDATE || requestCode == Constants.RC_EVENT_NEW) && resultCode == RESULT_OK) {
             delta = 0;
-            new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+        }
+
+        if (requestCode == Constants.RO_LOGIN)  {
+            if (resultCode == RESULT_OK) {
+                fabionUser = data.getExtras().getParcelable("FUser");
+                delta = 0;
+                new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+            }
+            else if (resultCode == RESULT_FIRST_USER + 1) {
+                fabionUser = new FabionUser();
+                Intent i = new Intent();
+                i.putExtra("FUser", new FabionUser());
+                setResult(RESULT_OK, i);
+                finish();
+            }
         }
     }
 
