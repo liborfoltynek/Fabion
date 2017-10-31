@@ -23,6 +23,7 @@ import java.util.Calendar;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.fotolibb.fabion.Constants.FAB_USER;
 
 public class EventDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -128,6 +129,21 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
+        //outState.putCharSequence("UlozenyText", sText);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Toast.makeText(getApplicationContext(), "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
+
     }
 
     private void SwitchEditMode(Boolean isEnabled) {

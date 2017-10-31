@@ -26,6 +26,8 @@ import android.widget.ViewFlipper;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.fotolibb.fabion.Constants.FAB_USER;
+
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer {
     private int month;
     private int year;
@@ -105,6 +107,33 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         nStav = 0;
         delta = 0;
         new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (fabionUser != null) {
+            outState.putParcelable(FAB_USER, fabionUser);
+        }
+        outState.putInt("MONTH", month);
+        outState.putInt("YEAR", year);
+        outState.putInt("NSTAV", nStav);
+        outState.putInt("DELTA", delta);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //Toast.makeText(getApplicationContext(), "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
+        FabionUser f = savedInstanceState.getParcelable(FAB_USER);
+        if (f != null) {
+            fabionUser = f;
+        }
+
+        month = savedInstanceState.getInt("MONTH");
+        year = savedInstanceState.getInt("YEAR");
+        delta = savedInstanceState.getInt("DELTA");
+        nStav = savedInstanceState.getInt("NSTAV");
     }
 
     @Override
