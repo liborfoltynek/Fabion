@@ -274,7 +274,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         return t;
     }
 
-
     private ArrayList<TextView> getDayText(int d) {
         ArrayList<TextView> views = new ArrayList<TextView>();
         for (int i = 0; i < events.size(); i++) {
@@ -290,26 +289,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
         return views;
     }
-
-   /* private TextView getDayText(int d) {
-        StringBuilder sb = new StringBuilder();
-        boolean b = false;
-        for (int i = 0; i < events.toArray().length; i++) {
-            if (((FabionEvent) events.toArray()[i]).getDay() == d) {
-                if (b)
-                    sb.append("\n");
-                if (!b) {
-                    b = true;
-                }
-                if (fabionUser.isLogged()) {
-                    sb.append(((FabionEvent) events.toArray()[i]).getLogin());
-                } else {
-                    sb.append("***");
-                }
-            }
-        }
-        return sb.toString();
-    }*/
 
     private void PrepareNewEvent() {
         Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);

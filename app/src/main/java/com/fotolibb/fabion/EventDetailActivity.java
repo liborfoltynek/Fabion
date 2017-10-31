@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -82,7 +81,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 }
             });
 
-            ((EditText) findViewById(R.id.eventDetailLogin)).setText(fabionEvent.getLogin());
             ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
@@ -98,13 +96,12 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (fabionEvent.getId() == 0) {
                 SwitchEditMode(true);
                 fab.setVisibility(GONE);
+                ((EditText) findViewById(R.id.eventDetailSubject)).setText(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
             }
 
         } catch (Exception ex) {
             Log.e("EX", ex.getLocalizedMessage());
         }
-
-
     }
 
     private void SwitchEditMode() {
@@ -132,7 +129,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     public void onEventDetailButtonClick(View v) {
         FabionEvent updatedEvent = new FabionEvent(
                 fabionEvent.getId(),
-                ((EditText) findViewById(R.id.eventDetailLogin)).getText().toString(),
+                fabionUser.Login,
                 ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailEditNote)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailTimeFrom)).getText().toString(),
