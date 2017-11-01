@@ -36,7 +36,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private TableLayout tableLayout1, tableLayout2;
     private EventsByMonthsScrollingActivity mainActivity;
     private ArrayList<FabionEvent> events;
-    private ViewFlipper flipper;
+    //private ViewFlipper flipper;
     ProgressBar progressBar;
     private int nStav = 1;
     private int delta = 1;
@@ -47,7 +47,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         setContentView(R.layout.activity_events_by_months_scrolling);
 
         mainActivity = this;
-        flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
+        //flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -68,8 +68,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         month = c.get(Calendar.MONTH);
         year = c.get(Calendar.YEAR);
 
-        tableLayout1 = flipper.findViewById(R.id.calendarTableScroll1);
-        tableLayout2 = flipper.findViewById(R.id.calendarTableScroll2);
+        tableLayout1 = (TableLayout) mainActivity.findViewById(R.id.calendarTableScroll1);
+        //tableLayout2 = flipper.findViewById(R.id.calendarTableScroll2);
         this.setTitle(String.format("%d/%d [%s]", month + 1, year, fabionUser.isLogged() ? fabionUser.Login : ""));
 
         gestDetector = new GestureDetector(this,
@@ -279,7 +279,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
 
         renderCalendar(tableLayout, c, today, tomonth, day);
-
+/*
         if (delta == 1) {
             flipper.setInAnimation(Animations.animZprava());
             flipper.setOutAnimation(Animations.animZlava());
@@ -287,7 +287,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             flipper.setInAnimation(Animations.animZprava1());
             flipper.setOutAnimation(Animations.animZlava1());
         }
-
+*/
         // if (delta != 0) {
         //     flipper.showNext();
         // }
