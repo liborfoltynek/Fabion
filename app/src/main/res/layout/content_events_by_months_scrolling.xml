@@ -9,27 +9,22 @@
     tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity"
     tools:showIn="@layout/activity_events_by_months_scrolling">
 
-    <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/view_flipperMonth"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context="com.fotolibb.fabion.EventsByDaysActivity">
-        <include
-            android:id="@+id/includeMonth1"
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/calendarTableScroll1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            layout="@layout/inc_month_cal1" >
-        </include>
-        <include
-            android:id="@+id/includeMonth2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            layout="@layout/inc_month_cal2" >
-        </include>
-    </ViewFlipper>
+            android:collapseColumns=""
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity">
+        </TableLayout>
+    </ScrollView>
+
 
 </android.support.v4.widget.NestedScrollView>

@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -36,7 +37,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private EventsByMonthsScrollingActivity mainActivity;
     private ArrayList<FabionEvent> events;
     private ViewFlipper flipper;
-    //private CollapsingToolbarLayout toolbarLayout;
+    ProgressBar progressBar;
     private int nStav = 1;
     private int delta = 1;
 
@@ -48,6 +49,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         mainActivity = this;
         flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMonth);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +86,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     month = 0;
                                     year++;
                                 }
+                                progressBar.setVisibility(View.VISIBLE);
                                 nStav = nStav == 0 ? 1 : 0;
                                 new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                             }
@@ -96,6 +99,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     year--;
                                 }
                                 nStav = nStav == 0 ? 1 : 0;
+                                progressBar.setVisibility(View.VISIBLE);
                                 new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
                             }
                         }
@@ -105,6 +109,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
         nStav = 0;
         delta = 0;
+        progressBar.setVisibility(View.VISIBLE);
         new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
     }
 
@@ -133,6 +138,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         delta = savedInstanceState.getInt("DELTA");
         nStav = savedInstanceState.getInt("NSTAV");
         delta = 0;
+        progressBar.setVisibility(View.VISIBLE);
         new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
     }
 
@@ -243,7 +249,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
-
+        progressBar.setVisibility(View.GONE);
         this.setTitle(String.format("%d/%d %s", month + 1, year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
 
         TableLayout tableLayout;
