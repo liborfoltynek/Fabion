@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -103,7 +105,12 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.eventDetailEditNote).setVisibility(GONE);
                 findViewById(R.id.eventDetailEditNoteLabel).setVisibility(GONE);
             }
-            ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%d.%d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
+
+
+
+            ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%02d.%02d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
+
+
 
             if (fabionEvent.getId() == 0) {
                 SwitchEditMode(true);
@@ -134,7 +141,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
         //outState.putCharSequence("UlozenyText", sText);
 
     }
@@ -142,7 +149,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Toast.makeText(getApplicationContext(), "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -297,7 +304,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         }
         // time from
         if (view == eventTimeFromTextView) {
-
             String timeStr = ((TextView) findViewById(R.id.eventDetailTimeFrom)).getText().toString();
             Calendar c = getTimeFromString(timeStr);
             timePickerDialogFrom.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));

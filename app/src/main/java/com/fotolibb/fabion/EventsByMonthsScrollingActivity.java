@@ -16,7 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -124,7 +123,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        //Toast.makeText(getApplicationContext(), "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
         FabionUser f = savedInstanceState.getParcelable(FAB_USER);
         if (f != null) {
             fabionUser = f;
@@ -134,6 +132,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         year = savedInstanceState.getInt("YEAR");
         delta = savedInstanceState.getInt("DELTA");
         nStav = savedInstanceState.getInt("NSTAV");
+        delta = 0;
+        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
     }
 
     @Override
@@ -220,18 +220,20 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == Constants.RC_EVENT_UPDATE || requestCode == Constants.RC_EVENT_NEW) && resultCode == RESULT_OK) {
             delta = 0;
+            new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
         }
 
-        if (requestCode == Constants.RO_LOGIN)  {
+        if (requestCode == Constants.RO_LOGIN) {
             if (resultCode == RESULT_OK) {
                 fabionUser = data.getExtras().getParcelable("FUser");
                 delta = 0;
                 new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
-            }
-            else if (resultCode == RESULT_FIRST_USER + 1) {
+            } else if (resultCode == RESULT_FIRST_USER + 1) {
                 fabionUser = new FabionUser();
                 Intent i = new Intent();
                 i.putExtra("FUser", new FabionUser());
+                i.putExtra("MONTH", month);
+                i.putExtra("YEAR", year);
                 setResult(RESULT_OK, i);
                 finish();
             }
@@ -245,10 +247,10 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         this.setTitle(String.format("%d/%d %s", month + 1, year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
 
         TableLayout tableLayout;
-        if (nStav == 0)
-            tableLayout = tableLayout1;
-        else
-            tableLayout = tableLayout2;
+        //  if (nStav == 0)
+        tableLayout = tableLayout1;
+        //  else
+        //     tableLayout = tableLayout2;
 
         try {
             tableLayout.removeAllViews();
@@ -270,6 +272,22 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             day = -5;
         }
 
+        renderCalendar(tableLayout, c, today, tomonth, day);
+
+        if (delta == 1) {
+            flipper.setInAnimation(Animations.animZprava());
+            flipper.setOutAnimation(Animations.animZlava());
+        } else {
+            flipper.setInAnimation(Animations.animZprava1());
+            flipper.setOutAnimation(Animations.animZlava1());
+        }
+
+        // if (delta != 0) {
+        //     flipper.showNext();
+        // }
+    }
+
+    private void renderCalendar(TableLayout tableLayout, Calendar c, int today, int tomonth, int day) {
         TableRow tr = new TableRow(this);
         InitDaysHeader(tr, tableLayout);
 
@@ -318,7 +336,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
                     ArrayList<View> texts = getDayText(day);
                     for (int i = 0; i < texts.size(); i++) {
-                            lDay.addView(texts.get(i));
+                        lDay.addView(texts.get(i));
                     }
                     l.addView(lDay);
                 }
@@ -327,18 +345,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 tr.addView(l);
             }
             tableLayout.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-        }
-
-        if (delta == 1) {
-            flipper.setInAnimation(Animations.animZprava());
-            flipper.setOutAnimation(Animations.animZlava());
-        } else {
-            flipper.setInAnimation(Animations.animZprava1());
-            flipper.setOutAnimation(Animations.animZlava1());
-        }
-
-        if (delta != 0) {
-            flipper.showNext();
         }
     }
 
@@ -381,7 +387,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     views.add(t);
 
                     TextView tt = new TextView(getApplicationContext());
-                    tt.setText(String.format("%s-%s",fe.getTimeFrom(), fe.getTimeTo()));
+                    tt.setText(String.format("%s-%s", fe.getTimeFrom(), fe.getTimeTo()));
                     tt.setTextSize(9);
                     TextView ttt = new TextView(getApplicationContext());
                     ttt.setText("  ");
@@ -390,8 +396,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     ttt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                     LinearLayout sp = new LinearLayout(getApplicationContext());
-                    sp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,1));
-                    sp.setPadding(50,0,50,0);
+                    sp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                    sp.setPadding(50, 0, 50, 0);
                     sp.setBackgroundColor(Color.BLACK);
                     sp.setGravity(Gravity.CENTER);
                     sp.addView(ttt);

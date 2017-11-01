@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +23,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FabionUser fabionUser;
+    private MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        mainActivity = this;
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, R.string.not_implemented, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                MonthView(mainActivity);
             }
         });
 
@@ -55,9 +55,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -82,8 +81,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
-        //outState.putCharSequence("UlozenyText", sText);
         if (fabionUser != null) {
             outState.putParcelable(FAB_USER, fabionUser);
         }
@@ -193,9 +190,10 @@ public class MainActivity extends AppCompatActivity
                 setFabionUserInfoText();
             }
         } else if (requestCode == RO_MONTHVIEW) {
-            if (data != null) {
-                fabionUser = data.getParcelableExtra("FUser");
-            }
+            if (resultCode == RESULT_OK)
+                if (data != null) {
+                    fabionUser = data.getParcelableExtra("FUser");
+                }
         }
     }
 
