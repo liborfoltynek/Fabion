@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.fotolibb.fabion.Constants.FAB_USER;
+import static com.fotolibb.fabion.Constants.PAR_FUSER;
 import static com.fotolibb.fabion.Constants.RO_MONTHVIEW;
 
 public class MainActivity extends AppCompatActivity
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity
 
         mainActivity = this;
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
+        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_production));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity
     private void MonthView(MainActivity mainActivity) {
         if (fabionUser.isLogged()) {
             Intent intent = new Intent(getApplicationContext(), EventsByMonthsScrollingActivity.class);
-            intent.putExtra("FUser", fabionUser);
+            intent.putExtra(PAR_FUSER, fabionUser);
             startActivityForResult(intent, RO_MONTHVIEW);
         } else {
             Toast.makeText(getApplicationContext(), "Pro zobrazení detailů se musíte přihlásit", Toast.LENGTH_SHORT).show();
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity
                 Intent intent2 = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivityForResult(intent2, Constants.RO_LOGIN);
             } catch (Exception ex) {
-                Log.e("EX", ex.getMessage());
+                Log.e(getString(R.string.TAG_EX), ex.getMessage());
             }
         }
     }
@@ -180,8 +181,8 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.RO_LOGIN) {
             if (resultCode == RESULT_OK) {
-                if (data.hasExtra("FUser")) {
-                    fabionUser = data.getParcelableExtra("FUser");
+                if (data.hasExtra(PAR_FUSER)) {
+                    fabionUser = data.getParcelableExtra(PAR_FUSER);
                     setFabionUserInfoText();
                     MonthView(this);
                 }
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity
         } else if (requestCode == RO_MONTHVIEW) {
             if (resultCode == RESULT_OK)
                 if (data != null) {
-                    fabionUser = data.getParcelableExtra("FUser");
+                    fabionUser = data.getParcelableExtra(PAR_FUSER);
                 }
         }
     }

@@ -16,6 +16,8 @@ public class Constants {
     }
 
     public static String FAB_USER = "FabUser";
+    public static String PAR_FUSER = "FUser";
+    public static String PAR_FEVENT = "FEvent";
 
     public static void setUrlService(String url) {
         if (!urlServiceSet) {

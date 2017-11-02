@@ -18,20 +18,18 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.text.DecimalFormat;
-import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.fotolibb.fabion.Constants.FAB_USER;
+import static com.fotolibb.fabion.Constants.PAR_FEVENT;
+import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
 public class EventDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FabionEvent fabionEvent;
     private FabionUser fabionUser;
-
     private FloatingActionButton fab;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialogFrom, timePickerDialogTo;
@@ -44,8 +42,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     private int day, month, year;
 
     private int TIME_PICKER_THEME = 0;
-    private int TIME_FROM = 0;
-    private int TIME_TO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +49,12 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         try {
             setContentView(R.layout.activity_event_detail);
             setResult(RESULT_CANCELED);
-            //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            //setSupportActionBar(toolbar);
-            dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //, Locale.forLanguageTag("CS"));
-            timeFormatter = new SimpleDateFormat("HH:mm"); //, Locale.forLanguageTag("CS"));
+            dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+            timeFormatter = new SimpleDateFormat("HH:mm");
 
             Intent i = getIntent();
-            fabionEvent = i.getExtras().getParcelable("FEvent");
-            fabionUser = i.getExtras().getParcelable("FUser");
+            fabionEvent = i.getExtras().getParcelable(PAR_FEVENT);
+            fabionUser = i.getExtras().getParcelable(PAR_FUSER);
 
             day = fabionEvent.getDay();
             month = fabionEvent.getMonth();
@@ -94,7 +88,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 }
             });
 
-            //((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
             ((EditText) findViewById(R.id.eventDetailSubject)).setHint(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
@@ -106,11 +99,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.eventDetailEditNoteLabel).setVisibility(GONE);
             }
 
-
-
             ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%02d.%02d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
-
-
 
             if (fabionEvent.getId() == 0) {
                 SwitchEditMode(true);
@@ -119,7 +108,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             }
 
         } catch (Exception ex) {
-            Log.e("EX", ex.getLocalizedMessage());
+            Log.e(getString(R.string.TAG_EX), ex.getLocalizedMessage());
         }
     }
 
@@ -141,27 +130,21 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //Toast.makeText(getApplicationContext(), "onSaveInstanceState", Toast.LENGTH_SHORT).show();
-        //outState.putCharSequence("UlozenyText", sText);
-
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-//        Toast.makeText(getApplicationContext(), "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
-
     }
 
     private void SwitchEditMode(Boolean isEnabled) {
 
         if (!fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login)) {
-            Toast.makeText(getApplicationContext(), "Nelze editovat, co neni tvoje", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.CANNOT_EDIT_SOMEBODYS_ELSE_EVENT, Toast.LENGTH_LONG).show();
         } else {
 
             findViewById(R.id.eventDetailOK).setEnabled(isEnabled);
             findViewById(R.id.eventDetailOK).setVisibility(isEnabled ? View.VISIBLE : GONE);
-
             findViewById(R.id.eventDetailSubject).setEnabled(isEnabled);
             findViewById(R.id.eventDetailEditNote).setEnabled(isEnabled);
             findViewById(R.id.eventDetailTimeFrom).setEnabled(isEnabled);
@@ -193,7 +176,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         Boolean issue = false;
 
         if (fe.getLogin().isEmpty()) {
-            sb.append("Není vyplněn login");
+            sb.append(getString(R.string.LOGIN_NOT_SET));
             issue = true;
         }
 
@@ -217,7 +200,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (issue) {
                 sb.append("\n");
             }
-            sb.append("Nelze nastavit datum do minulosti");
+            sb.append(getString(R.string.UNABLE_TO_SET_DATE_IN_PAST));
             issue = true;
         }
 
@@ -225,7 +208,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             if (issue) {
                 sb.append("\n");
             }
-            sb.append("Konec rezervace musí být později, než začátek");
+            sb.append(getString(R.string.EVENT_FROM_MUST_BE_BEFORE_TO));
             issue = true;
         }
 
@@ -305,14 +288,14 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         // time from
         if (view == eventTimeFromTextView) {
             String timeStr = ((TextView) findViewById(R.id.eventDetailTimeFrom)).getText().toString();
-            Calendar c = getTimeFromString(timeStr);
+            Calendar c = Tools.getTime(timeStr);
             timePickerDialogFrom.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogFrom.show();
         }
         // time to
         if (view == eventTimeToTextView) {
             String timeStr = ((TextView) findViewById(R.id.eventDetailTimeTo)).getText().toString();
-            Calendar c = getTimeFromString(timeStr);
+            Calendar c = Tools.getTime(timeStr);
             timePickerDialogTo.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             timePickerDialogTo.show();
         }
@@ -320,17 +303,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         if (view == eventDetailButtonOK) {
             onEventDetailButtonClick(view);
         }
-    }
-
-    private Calendar getTimeFromString(String timeStr) {
-        return Tools.getTime(timeStr);
-        /*Calendar c = Calendar.getInstance();
-        Integer h = Integer.parseInt(timeStr.substring(0, 2));
-        Integer m = Integer.parseInt(timeStr.substring(3, 5));
-        c.set(Calendar.HOUR_OF_DAY, h);
-        c.set(Calendar.MINUTE, m);
-        c.set(Calendar.SECOND, 0);
-        return c;*/
     }
 
     private void roundMinutes(Calendar c) {

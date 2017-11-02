@@ -30,15 +30,13 @@ public class LoadDataByMonthsAsyncTask
     private int mYear;
     private String sURL;
     private ArrayList events;
-    private FabionUser fabionUser;
-    private EventsByMonthsScrollingActivity callingActivity;
+    private IEventsConsumer callingActivity;
 
-    public LoadDataByMonthsAsyncTask(int mMonth, int mYear, String sURL, FabionUser fabionUser, EventsByMonthsScrollingActivity activity) {
-
+    public LoadDataByMonthsAsyncTask( int mMonth, int mYear, String sURL, FabionUser fabionUser, IEventsConsumer activity) {
         this.mMonth = mMonth;
         this.mYear = mYear;
         this.sURL = sURL;
-        this.fabionUser = fabionUser;
+        FabionUser fabionUser1 = fabionUser;
         events = new ArrayList();
         this.callingActivity = activity;
     }

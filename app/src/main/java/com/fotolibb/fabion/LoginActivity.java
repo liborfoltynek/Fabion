@@ -33,6 +33,7 @@ import java.util.Formatter;
 import java.util.Objects;
 
 import static android.support.constraint.R.id.parent;
+import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -43,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     public void setFabionUser(FabionUser fu) {
         try {
             Intent ii = new Intent(); //getApplicationContext(), MainActivity.class);
-            ii.putExtra("FUser", fu);
+            ii.putExtra(PAR_FUSER, fu);
 
             if (fu.isLogged()) {
                 setResult(RESULT_OK, ii);
@@ -60,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         } catch (Exception ex) {
-            Log.e("EX", ex.getMessage());
+            Log.e(getString(R.string.TAG_EX), ex.getMessage());
         }
     }
 
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             System.err.println("I'm sorry, but SHA-1 is not a valid message digest algorithm");
             setResult(RESULT_CANCELED);
         } catch (Exception ex) {
-            Log.e("EX", ex.getMessage());
+            Log.e(getString(R.string.TAG_EX), ex.getMessage());
         }
     }
 }

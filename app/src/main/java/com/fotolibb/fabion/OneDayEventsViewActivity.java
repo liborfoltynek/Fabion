@@ -20,6 +20,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.fotolibb.fabion.Constants.PAR_FEVENT;
+import static com.fotolibb.fabion.Constants.PAR_FUSER;
+
 public class OneDayEventsViewActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, IEventsConsumer, IStringConsumer {
 
     private static final int ITEM_ID_DELETE = Menu.FIRST + 1;
@@ -50,7 +53,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
 
         URL = Constants.getUrlService() + "getday.php?d=%d&m=%d&y=%d";
         Intent i = getIntent();
-        fabionUser = i.getExtras().getParcelable("FUser");
+        fabionUser = i.getExtras().getParcelable(PAR_FUSER);
         int d = i.getExtras().getInt("Day");
         int m = i.getExtras().getInt("Month");
         int y = i.getExtras().getInt("Year");
@@ -178,8 +181,8 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
         FabionEvent fe = fabionEvents.get(position);
-        intent.putExtra("FUser", fabionUser);
-        intent.putExtra("FEvent", fe);
+        intent.putExtra(PAR_FUSER, fabionUser);
+        intent.putExtra(PAR_FEVENT, fe);
         startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
     }
 
@@ -218,7 +221,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
                 });
             }
         } catch (Exception ex) {
-            Log.e("EX", ex.getMessage());
+            Log.e(getString(R.string.TAG_EX), ex.getMessage());
         }
     }
 }
