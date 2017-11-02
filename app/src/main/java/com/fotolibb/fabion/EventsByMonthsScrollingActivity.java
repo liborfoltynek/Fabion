@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import java.util.Calendar;
 import static com.fotolibb.fabion.Constants.FAB_USER;
 
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer {
+    ProgressBar progressBar;
     private int month;
     private int year;
     private FabionUser fabionUser;
@@ -36,9 +38,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private TableLayout tableLayout1, tableLayout2;
     private EventsByMonthsScrollingActivity mainActivity;
     private ArrayList<FabionEvent> events;
-    //private ViewFlipper flipper;
-    ProgressBar progressBar;
-    private int nStav = 1;
+    private ViewFlipper flipper;
+    //private int nStav = 1;
+
     private int delta = 1;
 
     @Override
@@ -47,8 +49,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         setContentView(R.layout.activity_events_by_months_scrolling);
 
         mainActivity = this;
-        //flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
-
+        flipper = (ViewFlipper) findViewById(R.id.view_flipperMonth);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMonth);
@@ -68,8 +69,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         month = c.get(Calendar.MONTH);
         year = c.get(Calendar.YEAR);
 
-        tableLayout1 = (TableLayout) mainActivity.findViewById(R.id.calendarTableScroll1);
-        //tableLayout2 = flipper.findViewById(R.id.calendarTableScroll2);
+        tableLayout1 = flipper.findViewById(R.id.calendarTableScroll1);
+        tableLayout2 = flipper.findViewById(R.id.calendarTableScroll2);
         this.setTitle(String.format("%d/%d [%s]", month + 1, year, fabionUser.isLogged() ? fabionUser.Login : ""));
 
         gestDetector = new GestureDetector(this,
@@ -87,8 +88,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     year++;
                                 }
                                 progressBar.setVisibility(View.VISIBLE);
-                                nStav = nStav == 0 ? 1 : 0;
-                                new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
+                                //nStav = nStav == 0 ? 1 : 0;
+                                LoadData(mainActivity);
                             }
 
                             if (rychlostX > 10.0f) {
@@ -98,19 +99,23 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                     month = 11;
                                     year--;
                                 }
-                                nStav = nStav == 0 ? 1 : 0;
+                                ///nStav = nStav == 0 ? 1 : 0;
                                 progressBar.setVisibility(View.VISIBLE);
-                                new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, mainActivity).execute();
+                                LoadData(mainActivity);
                             }
                         }
                         return true;
                     }
                 });
 
-        nStav = 0;
+        //nStav = 0;
         delta = 0;
         progressBar.setVisibility(View.VISIBLE);
-        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+        LoadData(this);
+    }
+
+    protected void LoadData(EventsByMonthsScrollingActivity activity) {
+        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, activity).execute();
     }
 
     @Override
@@ -121,7 +126,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
         outState.putInt("MONTH", month);
         outState.putInt("YEAR", year);
-        outState.putInt("NSTAV", nStav);
+        //outState.putInt("NSTAV", nStav);
         outState.putInt("DELTA", delta);
     }
 
@@ -136,10 +141,10 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         month = savedInstanceState.getInt("MONTH");
         year = savedInstanceState.getInt("YEAR");
         delta = savedInstanceState.getInt("DELTA");
-        nStav = savedInstanceState.getInt("NSTAV");
+        //nStav = savedInstanceState.getInt("NSTAV");
         delta = 0;
         progressBar.setVisibility(View.VISIBLE);
-        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+        LoadData(this);
     }
 
     @Override
@@ -226,14 +231,14 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == Constants.RC_EVENT_UPDATE || requestCode == Constants.RC_EVENT_NEW) && resultCode == RESULT_OK) {
             delta = 0;
-            new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+            LoadData(this);
         }
 
         if (requestCode == Constants.RO_LOGIN) {
             if (resultCode == RESULT_OK) {
                 fabionUser = data.getExtras().getParcelable("FUser");
                 delta = 0;
-                new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, this).execute();
+                LoadData(this);
             } else if (resultCode == RESULT_FIRST_USER + 1) {
                 fabionUser = new FabionUser();
                 Intent i = new Intent();
@@ -246,23 +251,33 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
     }
 
+    private String [] mesice = {"Leden", "Unor", "Březen", "Duben", "Květen","Červen","Červenec","Srpen","Září","Říjen","Listopad","Prosinec"};
+
     @Override
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
         progressBar.setVisibility(View.GONE);
-        this.setTitle(String.format("%d/%d %s", month + 1, year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
+        this.setTitle(String.format("%s %d %s", mesice[month], year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
 
-        TableLayout tableLayout;
-        //  if (nStav == 0)
-        tableLayout = tableLayout1;
-        //  else
-        //     tableLayout = tableLayout2;
+        TableLayout tableLayout = tableLayout1;
+        if (delta != 0) {
+            ScrollView sv = (ScrollView) flipper.getCurrentView();
+            if (sv.getChildAt(0).getId() == R.id.calendarTableScroll1) {
+                tableLayout = tableLayout2;
+            } else {
+                tableLayout = tableLayout1;
+            }
 
-        try {
-            tableLayout.removeAllViews();
-        } catch (Exception ex) {
-            Log.e("EX", ex.getMessage());
+            if (delta == 1) {
+                flipper.setInAnimation(Animations.animZprava());
+                flipper.setOutAnimation(Animations.animZlava());
+            } else {
+                flipper.setInAnimation(Animations.animZprava1());
+                flipper.setOutAnimation(Animations.animZlava1());
+            }
         }
+
+        tableLayout.removeAllViews();
 
         Calendar c = Calendar.getInstance();
         int today = c.get(Calendar.DAY_OF_MONTH);
@@ -279,18 +294,10 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
 
         renderCalendar(tableLayout, c, today, tomonth, day);
-/*
-        if (delta == 1) {
-            flipper.setInAnimation(Animations.animZprava());
-            flipper.setOutAnimation(Animations.animZlava());
-        } else {
-            flipper.setInAnimation(Animations.animZprava1());
-            flipper.setOutAnimation(Animations.animZlava1());
+
+        if (delta != 0) {
+            flipper.showNext();
         }
-*/
-        // if (delta != 0) {
-        //     flipper.showNext();
-        // }
     }
 
     private void renderCalendar(TableLayout tableLayout, Calendar c, int today, int tomonth, int day) {
