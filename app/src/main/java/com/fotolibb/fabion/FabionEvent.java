@@ -8,8 +8,6 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-import static android.R.attr.id;
-
 /**
  * Created by Libb on 19.10.2017.
  */
@@ -34,90 +32,9 @@ public class FabionEvent implements Parcelable {
     private int Day;
     private int Month;
 
-    public void setId(int id) {
-        Id = id;
-    }
-
-    public void setLogin(String login) {
-        Login = login;
-    }
-
-    public void setTimeFrom(String timeFrom) {
-        TimeFrom = timeFrom;
-    }
-
-    public void setTimeTo(String timeTo) {
-        TimeTo = timeTo;
-    }
-
-    public void setDay(int day) {
-        Day = day;
-    }
-
-    public void setMonth(int month) {
-        Month = month;
-    }
-
-    public void setYear(int year) {
-        Year = year;
-    }
-
-    public void setSubject(String subject) {
-        Subject = subject;
-    }
-
-    public void setNote(String note) {
-        Note = note;
-    }
-
     private int Year;
     private String Subject;
     private String Note;
-
-    public int getId() {
-        return Id;
-    }
-
-    public String getLogin() {
-        return Login;
-    }
-
-    public String getTimeFrom() {
-        return TimeFrom;
-    }
-
-    public String getTimeTo() {
-        return TimeTo;
-    }
-
-    public int getDay() {return Day; }
-
-    public int getMonth() {
-        return Month;
-    }
-
-    public int getYear() {
-        return Year;
-    }
-
-    public String getSubject() {
-        return Subject;
-    }
-
-    public String getNote() {
-        return Note;
-    }
-
-
-    public static FabionEvent CreateNew(FabionUser fu) {
-        Calendar c = Calendar.getInstance();
-        int Day = c.get(Calendar.DAY_OF_MONTH);
-        int Month = c.get(Calendar.MONTH) + 1;
-        int Year = c.get(Calendar.YEAR);
-        String s = String.format("%s (%s)", fu.Name, fu.Login);
-        return new FabionEvent(
-        0, fu.Login, s, "","18:00", "20:00",Day, Month, Year);
-    }
 
     protected FabionEvent(Parcel in) {
         Id = in.readInt();
@@ -153,6 +70,88 @@ public class FabionEvent implements Parcelable {
         TimeTo = jsonEventData.getString("timeto");
         Subject = jsonEventData.getString("subject");
         Note = jsonEventData.getString("note");
+    }
+
+    public static FabionEvent CreateNew(FabionUser fu) {
+        Calendar c = Calendar.getInstance();
+        int Day = c.get(Calendar.DAY_OF_MONTH);
+        int Month = c.get(Calendar.MONTH) + 1;
+        int Year = c.get(Calendar.YEAR);
+        //String s = String.format("%s (%s)", fu.Name, fu.Login);
+        return new FabionEvent(
+                0, fu.Login, "", "", "18:00", "20:00", Day, Month, Year);
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    public String getLogin() {
+        return Login;
+    }
+
+    public void setLogin(String login) {
+        Login = login;
+    }
+
+    public String getTimeFrom() {
+        return TimeFrom;
+    }
+
+    public void setTimeFrom(String timeFrom) {
+        TimeFrom = timeFrom;
+    }
+
+    public String getTimeTo() {
+        return TimeTo;
+    }
+
+    public void setTimeTo(String timeTo) {
+        TimeTo = timeTo;
+    }
+
+    public int getDay() {
+        return Day;
+    }
+
+    public void setDay(int day) {
+        Day = day;
+    }
+
+    public int getMonth() {
+        return Month;
+    }
+
+    public void setMonth(int month) {
+        Month = month;
+    }
+
+    public int getYear() {
+        return Year;
+    }
+
+    public void setYear(int year) {
+        Year = year;
+    }
+
+    public String getSubject() {
+        return Subject;
+    }
+
+    public void setSubject(String subject) {
+        Subject = subject;
+    }
+
+    public String getNote() {
+        return Note;
+    }
+
+    public void setNote(String note) {
+        Note = note;
     }
 
     @Override

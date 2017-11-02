@@ -1,10 +1,9 @@
 package com.fotolibb.fabion;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,28 +15,30 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by Libb on 27.10.2017.
+ * Created by Libb on 02.11.2017.
  */
 
-public class DeleteEventAsyncTask
+public class LoadUserMonthTimeAsyncTask
         extends AsyncTask<String, String, String> {
 
-    private String login;
-    private String password;
-    private String eventId;
-    private String servicesUrl;
-    private IStringConsumer callingActivity;
+    private int mMonth;
+    private int mYear;
+    private String sURL;
 
-    public DeleteEventAsyncTask(String login, String passwordHash, String servicesUrl, String eventId, IStringConsumer callingActivity) {
-        this.login = login;
-        this.password = passwordHash;
-        this.eventId = eventId;
-        this.servicesUrl = servicesUrl;
-        this.callingActivity = callingActivity;
+    private IStringConsumer callingActivity;
+    FabionUser fabionUser;
+
+    public LoadUserMonthTimeAsyncTask( int mMonth, int mYear, String sURL, FabionUser fabionUser, IStringConsumer activity) {
+        this.mMonth = mMonth;
+        this.mYear = mYear;
+        this.sURL = sURL;
+        this.fabionUser = fabionUser;
+        this.callingActivity = activity;
     }
 
     protected String doInBackground(String... arg0) {
@@ -45,14 +46,14 @@ public class DeleteEventAsyncTask
         InputStream in = null;
 
         try {
-            String mainUrl = servicesUrl + "event.php?action=d&l=%s&p=%s&id=%s";
-            URL url = new URL(String.format(mainUrl, login, password, eventId));
+            URL url = new URL(String.format(sURL, mMonth + 1, mYear, fabionUser.Login, fabionUser.PasswordHash));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             in = new BufferedInputStream(conn.getInputStream());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"), 8);
+            BufferedReader reader = new BufferedReader(new
+                    InputStreamReader(in, "UTF-8"), 8);
             StringBuilder sb = new StringBuilder();
-            String radek;
+            String radek = null;
 
             while ((radek = reader.readLine()) != null) {
                 sb.append(radek + "\n");
@@ -73,19 +74,21 @@ public class DeleteEventAsyncTask
                 Log.e(TAG, "Exception: " + s);
             }
         }
-
         JSONObject jsonObject;
+        String result = null;
         try {
             jsonObject = new JSONObject(sJSON);
-            String result = jsonObject.getString("result");
-            callingActivity.ProcessData(result);
+            result = jsonObject.getString("sum");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return sJSON;
+        return result == null ? null : result.replace(".0","");//.replace(".5","½");
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        callingActivity.ProcessData(result);
     }
 }
-
-
 
 

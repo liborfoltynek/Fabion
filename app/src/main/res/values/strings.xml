@@ -2,7 +2,7 @@
     <string name="app_name">Fabion</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Nastavení</string>
     <string name="prompt_email">Login</string>
     <string name="prompt_password">Heslo</string>
     <string name="action_sign_in">Přihlásit se</string>
@@ -18,5 +18,38 @@
     </string>
     <string name="title_activity_event_detail">Detail rezervace</string>
     <string name="MSG_WARN_TIME_MUST_BE_OF_HALF_HOUR">Čas musí být po půlhodinách!</string>
+    <string name="EVENT_FROM_MUST_BE_BEFORE_TO">Konec rezervace musí být později, než začátek</string>
+    <string name="UNABLE_TO_SET_DATE_IN_PAST">Nelze nastavit datum do minulosti</string>
+    <string name="LOGIN_NOT_SET">Není vyplněn login</string>
+    <string name="CANNOT_EDIT_SOMEBODYS_ELSE_EVENT">Nelze editovat, co neni tvoje</string>
+    <string name="TAG_EX">EX</string>
+    <string name="MUST_LOGIN_FOR_DETAILS">Pro zobrazení detailů se musíte přihlásit</string>
+    <string name="action_login">Přihlásit</string>
+    <string name="action_logout">Odhlásit</string>
+
+    <string-array name="daysInWeek">
+        <item>Po</item>
+        <item>Út</item>
+        <item>St</item>
+        <item>Čt</item>
+        <item>Pá</item>
+        <item>So</item>
+        <item>Ne</item>
+    </string-array>
+
+    <string-array name="mesice">
+        <item>Leden</item>
+        <item>Únor</item>
+        <item>Březen</item>
+        <item>Duben</item>
+        <item>Květen</item>
+        <item>Červen</item>
+        <item>Červenec</item>
+        <item>Srpen</item>
+        <item>Září</item>
+        <item>Říjen</item>
+        <item>Listopad</item>
+        <item>Prosinec</item>
+    </string-array>
 
 </resources>

@@ -33,6 +33,7 @@ import java.util.Formatter;
 import java.util.Objects;
 
 import static android.support.constraint.R.id.parent;
+import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -42,23 +43,31 @@ public class LoginActivity extends AppCompatActivity {
 
     public void setFabionUser(FabionUser fu) {
         try {
+            Intent ii = new Intent(); //getApplicationContext(), MainActivity.class);
+            ii.putExtra(PAR_FUSER, fu);
+
             if (fu.isLogged()) {
-                Intent ii = new Intent(getApplicationContext(), MainActivity.class);
-                ii.putExtra("FUser", fu);
                 setResult(RESULT_OK, ii);
                 finish();
             } else {
-                setResult(RESULT_CANCELED);
+                setResult(RESULT_FIRST_USER+1, ii);
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(new Runnable() {
                     public void run() {
                         Toast.makeText(getApplicationContext(), R.string.action_sign_unableLogin, Toast.LENGTH_SHORT).show();
                     }
                 });
+                finish();
+
             }
         } catch (Exception ex) {
-            Log.e("EX", ex.getMessage());
+            Log.e(getString(R.string.TAG_EX), ex.getMessage());
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        setFabionUser(new FabionUser());
     }
 
     @Override
@@ -108,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             System.err.println("I'm sorry, but SHA-1 is not a valid message digest algorithm");
             setResult(RESULT_CANCELED);
         } catch (Exception ex) {
-            Log.e("EX", ex.getMessage());
+            Log.e(getString(R.string.TAG_EX), ex.getMessage());
         }
     }
 }
