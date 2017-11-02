@@ -90,6 +90,9 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
 
             ((EditText) findViewById(R.id.eventDetailTimeFrom)).setText(fabionEvent.getTimeFrom());
             ((EditText) findViewById(R.id.eventDetailTimeTo)).setText(fabionEvent.getTimeTo());
+            if (fabionEvent.getSubject().length() > 0) {
+                ((EditText) findViewById(R.id.eventDetailSubject)).setText(fabionEvent.getSubject());
+            }
             ((EditText) findViewById(R.id.eventDetailSubject)).setHint(String.format("%s (%s)", fabionUser.Name, fabionUser.Login));
 
             if (fabionEvent.getLogin().equalsIgnoreCase(fabionUser.Login) || fabionUser.Login.equalsIgnoreCase("libb")) {
@@ -155,10 +158,14 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
 
     // OK, update
     public void onEventDetailButtonClick(View v) {
+        String subject = ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString();
+        if (subject.length() == 0) {
+            subject = ((EditText) findViewById(R.id.eventDetailSubject)).getHint().toString();
+        }
         FabionEvent updatedEvent = new FabionEvent(
                 fabionEvent.getId(),
                 fabionUser.Login,
-                ((EditText) findViewById(R.id.eventDetailSubject)).getText().toString(),
+                subject,
                 ((EditText) findViewById(R.id.eventDetailEditNote)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailTimeFrom)).getText().toString(),
                 ((EditText) findViewById(R.id.eventDetailTimeTo)).getText().toString(),

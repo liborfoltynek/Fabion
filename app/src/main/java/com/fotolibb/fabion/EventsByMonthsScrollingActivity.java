@@ -31,7 +31,7 @@ import static com.fotolibb.fabion.Constants.FAB_USER;
 import static com.fotolibb.fabion.Constants.PAR_FEVENT;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
-public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer {
+public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer, IStringConsumer {
     ProgressBar progressBar;
     private int month;
     private int year;
@@ -135,7 +135,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
+        //TODO: finish menu
+    //    getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
         return true;
     }
 
@@ -245,8 +246,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     public void ProcessData(ArrayList<FabionEvent> events) {
         this.events = events;
         progressBar.setVisibility(View.GONE);
-        String[] mesice = getResources().getStringArray(R.array.mesice);
-        this.setTitle(String.format("%s %d %s", mesice[month], year, fabionUser.isLogged() ? String.format("[%s]", fabionUser.Login) : ""));
 
         TableLayout tableLayout = tableLayout1;
         if (delta != 0) {
@@ -272,6 +271,18 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         if (delta != 0) {
             flipper.showNext();
         }
+
+        new LoadUserMonthTimeAsyncTask(month, year, Constants.getUrlService() + "usermonthtime.php?m=%d&y=%d&l=%s&p=%s", fabionUser, mainActivity).execute();
+    }
+
+    @Override
+    public void ProcessData(String result) {
+        //Toast.makeText(getApplicationContext(), String.format("Hodin tento mesic: %s", result), Toast.LENGTH_SHORT).show();
+        //this.setTitle(this.getTitle() + String.format(" (%s)", result));
+        String[] mesice = getResources().getStringArray(R.array.mesice);
+
+        String hours = result != null ? String.format(", %sh.", result) : "";
+        this.setTitle(String.format("%s %d %s", mesice[month], year, fabionUser.isLogged() ? String.format("[%s%s]", fabionUser.Login, hours) : ""));
     }
 
     private void renderCalendar(TableLayout tableLayout) {
