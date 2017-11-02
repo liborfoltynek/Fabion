@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
 
         mainActivity = this;
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_production));
+        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -63,10 +64,30 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
             mYear = y;
         }
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabOneDay);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PrepareNewEvent();
+            }
+        });
+
         loadData();
     }
 
-    @Override
+    private void PrepareNewEvent() {
+        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+        intent.putExtra(PAR_FUSER, fabionUser);
+        FabionEvent fe = FabionEvent.CreateNew(fabionUser);
+        fe.setDay(mDay);
+        fe.setMonth(mMonth);
+        fe.setYear(mYear);
+        intent.putExtra(PAR_FEVENT, fe);
+        startActivityForResult(intent, Constants.RC_EVENT_NEW);
+    }
+
+
+        @Override
     public void onCreateContextMenu(ContextMenu menu, View view,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == listView.getId()) {
@@ -170,8 +191,9 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
         new LoadDataByDaysAsyncTask(mDay, mMonth, mYear, URL, fabionUser, this).execute();
     }
 
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == Constants.RC_EVENT_UPDATE) && (resultCode == RESULT_OK)) {
+        if ((requestCode == Constants.RC_EVENT_UPDATE || requestCode == Constants.RC_EVENT_NEW) && resultCode == RESULT_OK) {
             setResult(RESULT_OK);
             loadData();
         }
