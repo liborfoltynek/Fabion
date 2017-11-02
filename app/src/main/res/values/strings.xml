@@ -24,6 +24,8 @@
     <string name="CANNOT_EDIT_SOMEBODYS_ELSE_EVENT">Nelze editovat, co neni tvoje</string>
     <string name="TAG_EX">EX</string>
     <string name="MUST_LOGIN_FOR_DETAILS">Pro zobrazení detailů se musíte přihlásit</string>
+    <string name="action_login">Přihlásit</string>
+    <string name="action_logout">Odhlásit</string>
 
     <string-array name="daysInWeek">
         <item>Po</item>

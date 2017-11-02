@@ -147,7 +147,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_switchlogin) {
             return true;
         }
 

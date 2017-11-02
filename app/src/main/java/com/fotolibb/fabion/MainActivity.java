@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity
 
     private FabionUser fabionUser;
     private MainActivity mainActivity;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -111,19 +113,18 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection Simplifiabl  eIfStatement
-        if (id == R.id.action_settings) {
-            ShowNotImplemented(this);
+        if (id == R.id.action_switchlogin) {
+            if (fabionUser.isLogged()) {
+                Logout();
+            } else {
+                Login();
+            }
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void ShowNotImplemented(MainActivity mainActivity) {
-        Toast.makeText(mainActivity, R.string.not_implemented, Toast.LENGTH_LONG).show();
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -190,6 +191,12 @@ public class MainActivity extends AppCompatActivity
                 fabionUser = new FabionUser();
                 setFabionUserInfoText();
             }
+
+            if (menu != null) {
+                MenuItem mi = (MenuItem) menu.findItem(R.id.action_switchlogin);
+                mi.setTitle(fabionUser.isLogged() ? getString(R.string.action_logout) : getString(R.string.action_login));
+            }
+
         } else if (requestCode == RO_MONTHVIEW) {
             if (resultCode == RESULT_OK)
                 if (data != null) {

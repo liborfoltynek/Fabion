@@ -13,7 +13,7 @@
         android:title="Odhlásit" />
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_switchlogin"
         android:title="@string/action_settings"
         app:showAsAction="never" />
 

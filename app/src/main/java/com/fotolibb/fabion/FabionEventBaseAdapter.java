@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +68,7 @@ public class FabionEventBaseAdapter
 
         String u = String.format(serviceUrl, polozka.getLogin());
         //hld.imageUser.setImageResource(R.drawable.photographer);
-        new DownloadImageAsyncTask(hld).execute(new String[]{u});
+        new DownloadImageAsyncTask(context, hld).execute(new String[]{u});
 
         if (polozka.getLogin().equals(fabionUser.Login)) {
             hld.imageDelete.setVisibility(View.VISIBLE);
@@ -94,7 +95,7 @@ public class FabionEventBaseAdapter
         return rowItems.indexOf(getItem(position));
     }
 
-    private class ViewHolder {
+    public class ViewHolder implements IImageOwner {
         ImageView imageUser;
         ImageView imageDelete;
         TextView txtSubject;
@@ -106,94 +107,10 @@ public class FabionEventBaseAdapter
         public void setUserImage(Bitmap bmp) {
             if (!imageUserSet) {
                 imageUser.setImageBitmap(bmp);
-             //   imageUserSet = true;
+                //   imageUserSet = true;
             }
         }
     }
-
-    private class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
-
-        ViewHolder viewHolder;
-        private SharedPreferences mPrefs;
-
-        public DownloadImageAsyncTask(ViewHolder vh) {
-            viewHolder = vh;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            Bitmap bmp = null;
-            for (String url : urls) {
-                bmp = LoadBmpFromSharedPrefs(url);
-
-                if (bmp == null) {
-                    bmp = nactiBmp(url);
-                }
-            }
-            return bmp;
-        }
-
-        private void SaveBmpToSharedPrefs(String url, Bitmap bmp) {
-            mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            byte[] b = baos.toByteArray();
-            String encoded = Base64.encodeToString(b, DEFAULT);
-            prefsEditor.putString(url, encoded);
-            prefsEditor.apply();
-        }
-
-        private Bitmap LoadBmpFromSharedPrefs(String url) {
-            Bitmap bmp;
-            mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            String encoded = mPrefs.getString(url, "");
-            if (encoded.isEmpty())
-                return null;
-
-            byte[] imageAsBytes = Base64.decode(encoded.getBytes(), DEFAULT);
-            bmp = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
-            return bmp;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            viewHolder.setUserImage(result);
-        }
-
-        private Bitmap nactiBmp(String url) {
-            Bitmap bmp = null;
-            InputStream stream = null;
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            bmOptions.inSampleSize = 1;
-            try {
-                stream = vytvorStream(url);
-                bmp = BitmapFactory.decodeStream(stream, null, bmOptions);
-                stream.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            SaveBmpToSharedPrefs(url, bmp);
-            return bmp;
-        }
-
-        private InputStream vytvorStream(String urlString) throws IOException {
-            InputStream stream = null;
-            URL url = new URL(urlString);
-            URLConnection connection = url.openConnection();
-            try {
-                HttpURLConnection httpCon = (HttpURLConnection) connection;
-                httpCon.setRequestMethod("GET");
-                httpCon.connect();
-                if (httpCon.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    stream = httpCon.getInputStream();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return stream;
-        }
-    }
-
-
 }
+
+
