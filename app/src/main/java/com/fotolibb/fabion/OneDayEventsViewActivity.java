@@ -51,7 +51,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
 
         setResult(RESULT_CANCELED);
 
-        URL = Constants.getUrlService() + "getday.php?d=%d&m=%d&y=%d";
+        URL = Constants.getUrlService() + "getday.php?d=%d&m=%d&y=%d&l=%s&p=%s";
         Intent i = getIntent();
         fabionUser = i.getExtras().getParcelable(PAR_FUSER);
         int d = i.getExtras().getInt("Day");

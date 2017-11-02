@@ -51,7 +51,7 @@ public class LoadDataByDaysAsyncTask
         InputStream in = null;
 
         try {
-            URL url = new URL(String.format(sURL, mDay, mMonth, mYear));
+            URL url = new URL(String.format(sURL, mDay, mMonth, mYear, fabionUser.Login, fabionUser.PasswordHash));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             in = new BufferedInputStream(conn.getInputStream());

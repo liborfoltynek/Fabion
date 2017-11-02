@@ -184,7 +184,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     protected void LoadData(EventsByMonthsScrollingActivity activity) {
         progressBar.setVisibility(View.VISIBLE);
-        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d", fabionUser, activity).execute();
+        new LoadDataByMonthsAsyncTask(month, year, Constants.getUrlService() + "getday.php?m=%d&y=%d&l=%s&p=%s", fabionUser, activity).execute();
     }
 
     @Override

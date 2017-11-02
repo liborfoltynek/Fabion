@@ -31,12 +31,13 @@ public class LoadDataByMonthsAsyncTask
     private String sURL;
     private ArrayList events;
     private IEventsConsumer callingActivity;
+    FabionUser fabionUser;
 
     public LoadDataByMonthsAsyncTask( int mMonth, int mYear, String sURL, FabionUser fabionUser, IEventsConsumer activity) {
         this.mMonth = mMonth;
         this.mYear = mYear;
         this.sURL = sURL;
-        FabionUser fabionUser1 = fabionUser;
+        this.fabionUser = fabionUser;
         events = new ArrayList();
         this.callingActivity = activity;
     }
@@ -46,7 +47,7 @@ public class LoadDataByMonthsAsyncTask
         InputStream in = null;
 
         try {
-            URL url = new URL(String.format(sURL, mMonth + 1, mYear));
+            URL url = new URL(String.format(sURL, mMonth + 1, mYear, fabionUser.Login, fabionUser.PasswordHash));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             in = new BufferedInputStream(conn.getInputStream());
