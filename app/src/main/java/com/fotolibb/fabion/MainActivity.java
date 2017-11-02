@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainActivity = this;
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
+        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_production));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -167,8 +167,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setFabionUserInfoText(FabionUser fu) {
-        if (fabionUser != null) {
-            ((TextView) findViewById(R.id.userText)).setText(fu.toString());
+        if (fu != null && fu.isLogged()) {
+            //((TextView) findViewById(R.id.userText)).setText(fu.toString());
+
+            ((TextView) findViewById(R.id.userDetailEmail)).setText(fu.Email);
+            ((TextView) findViewById(R.id.userDetailPhone)).setText(fu.Phone);
+            ((TextView) findViewById(R.id.userDetailName)).setText(fu.Name);
+            ((TextView) findViewById(R.id.userDetailFreeHours)).setText(Integer.toString(fu.FreeHours));
+            ((TextView) findViewById(R.id.userDetailLogin)).setText(fu.Login);
+
         }
     }
 }

@@ -8,9 +8,9 @@
     tools:context="com.fotolibb.fabion.MainActivity">
 
     <ImageView
+        android:id="@+id/mainImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mainImage"
         android:src="@drawable/fabion" />
 
 
@@ -21,7 +21,57 @@
         android:layout_below="@+id/mainImage"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:text="Hello World!" />
+        android:text="***"
+        android:visibility="gone" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userText"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
+        <TableRow>
+            <TextView android:text="Login: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userDetailLogin"
+                android:text="" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Jméno: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userDetailName"
+                android:text="" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="E-mail: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userDetailEmail"
+                android:text="" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Telefon: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userDetailPhone"
+                android:text="" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Volných hodin: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userDetailFreeHours"
+                android:text="" />
+        </TableRow>
+    </TableLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
