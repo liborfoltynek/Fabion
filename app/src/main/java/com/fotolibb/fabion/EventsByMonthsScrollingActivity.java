@@ -351,7 +351,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
         l.addView(tvDate);
 
-
         LinearLayout lDay = new LinearLayout(this);
         lDay.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         lDay.setOrientation(LinearLayout.VERTICAL);
@@ -393,6 +392,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 if (fabionUser.isLogged()) {
                     t.setTextSize(11);
                     t.setText(fe.getLogin());
+                    t.setTextColor(Color.BLACK);
                     t.setPadding(3, 0, 0, 0);
                     t.setGravity(Gravity.LEFT);
                     if (fe.getLogin().equalsIgnoreCase(fabionUser.Login)) {
@@ -403,10 +403,12 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     TextView tt = new TextView(getApplicationContext());
                     tt.setText(String.format("%s-%s", fe.getTimeFrom(), fe.getTimeTo()));
                     tt.setTextSize(9);
+                    tt.setTextColor(Color.BLACK);
                     TextView ttt = new TextView(getApplicationContext());
                     ttt.setText("  ");
                     ttt.setGravity(Gravity.CENTER);
                     ttt.setTextSize(9);
+                    ttt.setTextColor(Color.BLACK);
                     ttt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                     LinearLayout sp = new LinearLayout(getApplicationContext());
