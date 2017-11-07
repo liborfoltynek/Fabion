@@ -3,16 +3,12 @@ package com.fotolibb.fabion;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -169,13 +165,20 @@ public class MainActivity extends AppCompatActivity {
     private void setFabionUserInfoText(FabionUser fu) {
         if (fu != null && fu.isLogged()) {
             //((TextView) findViewById(R.id.userText)).setText(fu.toString());
-
+            TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
+            tl.setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.userText)).setVisibility(View.GONE);
             ((TextView) findViewById(R.id.userDetailEmail)).setText(fu.Email);
             ((TextView) findViewById(R.id.userDetailPhone)).setText(fu.Phone);
             ((TextView) findViewById(R.id.userDetailName)).setText(fu.Name);
             ((TextView) findViewById(R.id.userDetailFreeHours)).setText(Integer.toString(fu.FreeHours));
             ((TextView) findViewById(R.id.userDetailLogin)).setText(fu.Login);
+        } else {
+            TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
+            tl.setVisibility(View.GONE);
 
+            ((TextView) findViewById(R.id.userText)).setText(fu.toString());
+            ((TextView) findViewById(R.id.userText)).setVisibility(View.VISIBLE);
         }
     }
 }
