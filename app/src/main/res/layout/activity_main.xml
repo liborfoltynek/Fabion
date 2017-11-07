@@ -21,7 +21,7 @@
         android:layout_below="@+id/mainImage"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:text="***"
+        android:text=""
         android:visibility="gone" />
 
     <TableLayout
@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/userText"
         android:layout_centerHorizontal="true"
+        android:id="@+id/tableLayout"
         android:gravity="center">
 
         <TableRow>
