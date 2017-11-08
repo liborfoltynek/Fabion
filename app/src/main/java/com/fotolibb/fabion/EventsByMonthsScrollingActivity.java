@@ -332,6 +332,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         TextView tvDate = new TextView(this);
         l.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell, null));
 
+        if ((month == tomonth) && (day == today)) {
+            l.setBackgroundColor(Color.argb(125, 153, 218, 234));
+        }
         l.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
