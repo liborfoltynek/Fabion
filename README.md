@@ -23,3 +23,7 @@ VYLEPŠENÍ
 - kontrastnější schéma
 - v měsíčním pohledu je zobrazen nejprve čas, jako na webu
 - pokud jsou uložené přihlašovací údaje, aplikace vás po spuštění rovnou přihlásí
+
+1.0.4
+VYLEPŠENÍ
+- hlavní obrazovka zobrazuje fotku přihlášeného uživatele
