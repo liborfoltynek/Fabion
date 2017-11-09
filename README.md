@@ -17,3 +17,9 @@ OPRAVY CHYB:
 1.0.2
 VYLEPŠENÍ
 - dnešní den je více zvýrazněn
+
+1.0.3
+VYLEPŠENÍ
+- kontrastnější schéma
+- v měsíčním pohledu je zobrazen nejprve čas, jako na webu
+- pokud jsou uložené přihlašovací údaje, aplikace vás po spuštění rovnou přihlásí

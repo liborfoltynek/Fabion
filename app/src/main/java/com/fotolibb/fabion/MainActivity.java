@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             try {
                 Intent intent2 = new Intent(getApplicationContext(), LoginActivity.class);
+                intent2.putExtra("TryAutoLogin", !showAlreadyLoggedMessage);
                 startActivityForResult(intent2, Constants.RO_LOGIN);
             } catch (Exception ex) {
                 Log.e(getString(R.string.TAG_EX), ex.getMessage());

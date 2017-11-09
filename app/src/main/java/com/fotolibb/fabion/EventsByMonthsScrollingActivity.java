@@ -287,13 +287,13 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     private void renderCalendar(TableLayout tableLayout) {
         InitDaysHeader(tableLayout);
-        renderMonth(tableLayout);
+        RenderMonth(tableLayout);
     }
 
-    private void renderMonth(TableLayout tableLayout) {
+    private void RenderMonth(TableLayout tableLayout) {
         Calendar c = Calendar.getInstance();
-        int today = c.get(Calendar.DAY_OF_MONTH);
-        int tomonth = c.get(Calendar.MONTH);
+        int thisDay = c.get(Calendar.DAY_OF_MONTH);
+        int thisMonth = c.get(Calendar.MONTH);
         c.set(Calendar.DAY_OF_MONTH, 1);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.YEAR, year);
@@ -318,7 +318,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 l.setLayoutParams(llp);
 
                 if ((day > 0) && (day <= c.getActualMaximum(Calendar.DAY_OF_MONTH))) {
-                    renderDay(today, tomonth, day, d, l, llp);
+                    renderDay(thisDay, thisMonth, day, d, l, llp);
                 }
 
                 day++;
@@ -329,7 +329,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     }
 
     private void renderDay(int today, int tomonth, int day, int d, LinearLayout l, TableRow.LayoutParams llp) {
-        TextView tvDate = new TextView(this);
+        TextView tvDayNumber = new TextView(this);
         l.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell, null));
 
         if ((month == tomonth) && (day == today)) {
@@ -342,21 +342,25 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             }
         });
 
-        tvDate.setTextSize(24);
-        tvDate.setGravity(Gravity.TOP | Gravity.RIGHT);
-        tvDate.setText(Integer.toString(day));
-        tvDate.setPadding(0, 2, 12, 0);
-        if (d == 6) {
-            tvDate.setTextColor(Color.RED);
-        }
+        tvDayNumber.setTextSize(24);
+        tvDayNumber.setGravity(Gravity.TOP | Gravity.RIGHT);
+        tvDayNumber.setText(Integer.toString(day));
+        tvDayNumber.setPadding(0, 2, 12, 0);
+        tvDayNumber.setTextColor(d == 6 ? Color.RED : Color.BLACK);
+
         if ((month == tomonth) && (day == today)) {
-            tvDate.setTypeface(null, Typeface.BOLD);
+            tvDayNumber.setTypeface(null, Typeface.BOLD);
         }
-        l.addView(tvDate);
+        l.addView(tvDayNumber);
 
         LinearLayout lDay = new LinearLayout(this);
         lDay.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-        lDay.setOrientation(LinearLayout.VERTICAL);
+
+        //Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        //int rotation = display.getRotation();
+        //lDay.setOrientation(rotation == 0 ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL );
+
+        lDay.setOrientation(LinearLayout.VERTICAL );
         lDay.setPadding(0, 0, 0, 0);
         lDay.setLayoutParams(llp);
 
@@ -379,6 +383,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private TextView getDayInWeekHeaderCell(String day) {
         TextView t = new TextView(this);
         t.setText(day);
+        t.setTextColor(Color.BLACK);
         t.setGravity(Gravity.CENTER);
         if (day.equals("Ne")) {
             t.setTypeface(null, Typeface.BOLD);
@@ -391,41 +396,44 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         ArrayList<View> views = new ArrayList<View>();
         for (FabionEvent fe : events) {
             if (fe.getDay() == d) {
-                TextView t = new TextView(getApplicationContext());
+                TextView tLogin = new TextView(getApplicationContext());
                 if (fabionUser.isLogged()) {
-                    t.setTextSize(11);
-                    t.setText(fe.getLogin());
-                    t.setTextColor(Color.BLACK);
-                    t.setPadding(3, 0, 0, 0);
-                    t.setGravity(Gravity.LEFT);
+                    tLogin.setTextSize(9);
+                    tLogin.setText(fe.getLogin());
+                    tLogin.setTextColor(Color.BLACK);
+                    tLogin.setPadding(3, 0, 0, 0);
+                    tLogin.setGravity(Gravity.LEFT);
                     if (fe.getLogin().equalsIgnoreCase(fabionUser.Login)) {
-                        t.setTextColor(Color.argb(255, 99, 99, 255));
+                        tLogin.setTextColor(Color.argb(255, 99, 99, 255));
                     }
-                    views.add(t);
 
-                    TextView tt = new TextView(getApplicationContext());
-                    tt.setText(String.format("%s-%s", fe.getTimeFrom(), fe.getTimeTo()));
-                    tt.setTextSize(9);
-                    tt.setTextColor(Color.BLACK);
-                    TextView ttt = new TextView(getApplicationContext());
-                    ttt.setText("  ");
-                    ttt.setGravity(Gravity.CENTER);
-                    ttt.setTextSize(9);
-                    ttt.setTextColor(Color.BLACK);
-                    ttt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                    TextView tTime = new TextView(getApplicationContext());
+                    tTime.setText(String.format("%s-%s", fe.getTimeFrom(), fe.getTimeTo()));
+                    tTime.setBackgroundColor(Color.argb(150,222,222,222));
+                    tTime.setTextSize(11);
+                    tTime.setTextColor(Color.BLACK);
+
+                    TextView tPlaceHolder = new TextView(getApplicationContext());
+                    tPlaceHolder.setText("  ");
+                    tPlaceHolder.setGravity(Gravity.CENTER);
+                    tPlaceHolder.setTextSize(9);
+                    tPlaceHolder.setTextColor(Color.BLACK);
+                    tPlaceHolder.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                     LinearLayout sp = new LinearLayout(getApplicationContext());
                     sp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                     sp.setPadding(50, 0, 50, 0);
                     sp.setBackgroundColor(Color.BLACK);
                     sp.setGravity(Gravity.CENTER);
-                    sp.addView(ttt);
+                    sp.addView(tPlaceHolder);
 
-                    views.add(tt);
+                    views.add(tTime);
+                    views.add(tLogin);
                     views.add(sp);
                 } else {
-                    t.setText("***");
-                    views.add(t);
+                    tLogin.setText("***");
+                    views.add(tLogin);
                 }
             }
         }

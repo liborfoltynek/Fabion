@@ -75,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Boolean autoLogin =  getIntent().getExtras().getBoolean("TryAutoLogin");
+
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         String emailFromPrefs = mPrefs.getString(PREFS_KEY_EMAIL, "");
@@ -83,10 +85,17 @@ public class LoginActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.email)).setText(emailFromPrefs);
             ((EditText) findViewById(R.id.password)).setText(passFromPrefs);
             ((CheckBox) findViewById(R.id.storeLogin)).setChecked(true);
+            if (autoLogin) {
+                tryLogin();
+            }
         }
     }
 
     public void TryLogin(View view) {
+        tryLogin();
+    }
+
+    private void tryLogin() {
         try {
             TextView t = (TextView) findViewById(R.id.userText);
 
