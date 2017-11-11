@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements IImageOwner {
             ((TextView) findViewById(R.id.userDetailFreeHours)).setText(Integer.toString(fu.FreeHours));
             ((TextView) findViewById(R.id.userDetailLogin)).setText(fu.Login);
             ((ImageView) findViewById(R.id.imageViewUser)).setVisibility(View.VISIBLE);
-            
+
             String url = Constants.getUrlService() + "userimage.php?login=%s";
             String u = String.format(url, fabionUser.Login);
             new DownloadImageAsyncTask(getApplicationContext(), this).execute(new String[]{u});

@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Boolean autoLogin =  getIntent().getExtras().getBoolean("TryAutoLogin");
+        Boolean autoLogin = getIntent().hasExtra("TryAutoLogin") ? getIntent().getExtras().getBoolean("TryAutoLogin") : false;
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 

@@ -136,7 +136,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //TODO: finish menu
-    //    getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
+        getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -145,17 +146,15 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_switchlogin) {
-            return true;
-        }
-
-        if (id == R.id.menuLogin) {
-            Login();
-        } else if (id == R.id.menuLogout) {
-            Logout();
+        switch (item.getItemId())
+        {
+            case R.id.menuLogout:
+                Logout();
+                break;
+            case R.id.action_switchlogin:
+                Logout();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

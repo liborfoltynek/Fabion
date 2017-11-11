@@ -82,6 +82,10 @@ public class LoadUserMonthTimeAsyncTask
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
         return result == null ? null : result.replace(".0","");//.replace(".5","½");
     }
 
