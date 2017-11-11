@@ -31,6 +31,7 @@ import java.util.Calendar;
 
 import static com.fotolibb.fabion.Constants.FAB_USER;
 import static com.fotolibb.fabion.Constants.PAR_FEVENT;
+import static com.fotolibb.fabion.Constants.PAR_FEVENT_EDIT;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer, IStringConsumer {
@@ -76,7 +77,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
         gestDetector = new GestureDetector(this,
                 new GestureDetector.SimpleOnGestureListener() {
-                    
+
                     @Override
                     public boolean onFling(MotionEvent motionEvent1, MotionEvent motionEvent2, float deltaX, float deltaY) {
                         if (deltaY < 3000 && deltaY > -3000) {
@@ -443,14 +444,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             LinearLayout lEvent = new LinearLayout(this);
             lEvent.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-            //Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            //int rotation = display.getRotation();
-            //lDay.setOrientation(rotation == 0 ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL );
-
             lEvent.setOrientation(LinearLayout.VERTICAL);
             lEvent.setPadding(0, 0, 0, 0);
             lEvent.setTag(fe);
-            //lEvent.setLayoutParams(llp);
 
             if (fe.getDay() == d) {
                 TextView tLogin = new TextView(getApplicationContext());
@@ -484,9 +480,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     sp.setGravity(Gravity.CENTER);
                     sp.addView(tPlaceHolder);
 
-                    //views.add(tTime);
-                    //views.add(tLogin);
-                    //views.add(sp);
                     lEvent.addView(tTime);
                     lEvent.addView(tLogin);
                     lEvent.addView(sp);
@@ -525,7 +518,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     return true;
                 } else return false;
             }
-
         });
 
         public MyTouchListener(EventsByMonthsScrollingActivity c) {
@@ -537,11 +529,19 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             if (!gestureDetector.onTouchEvent(motionEvent)) {
                 int action = motionEvent.getAction();
                 if (longPress && action == MotionEvent.ACTION_MOVE) {
-                    ClipData data = ClipData.newPlainText("", "");
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
-                    isDragged = true;
-
+                    if (fabionUser.isLogged() && fabionUser.Login.equals(((FabionEvent) view.getTag()).getLogin())) {
+                        FabionEvent fe = (FabionEvent) view.getTag();
+                        Calendar cFE = Tools.getDate(fe);
+                        Calendar cNow = Calendar.getInstance();
+                        if (cNow.before(cFE)) {
+                            ClipData data = ClipData.newPlainText("", "");
+                            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                            view.startDrag(data, shadowBuilder, view, 0);
+                            isDragged = true;
+                        }
+                    } else {
+                        return false;
+                    }
                 } else {
                     if (action == MotionEvent.ACTION_UP) {
                         cellOnClick(view);
@@ -551,65 +551,6 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             }
             return false;
         }
-
-
-
-        /*private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                mainActivity.cellOnClick(activeView);
-                return super.onSingleTapUp(e);
-            }
-
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                return super.onDoubleTap(e);
-            }
-
-            @Override
-            public void onLongPress(MotionEvent e) {
-                Log.i("TOUCH", String.format("onLongPress, action: %d", e.getAction()));
-                super.onLongPress(e);
-            }
-
-
-            // Determines the fling velocity and then fires the appropriate swipe event accordingly
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                boolean result = false;
-                try {
-                    float diffY = e2.getY() - e1.getY();
-                    float diffX = e2.getX() - e1.getX();
-
-                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                        ClipData data = ClipData.newPlainText("", "");
-                        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                                activeView);
-                        activeView.startDrag(data, shadowBuilder, activeView, 0);
-
-                    } else {
-                        if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                            ClipData data = ClipData.newPlainText("", "");
-                            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                                    activeView);
-                            activeView.startDrag(data, shadowBuilder, activeView, 0);
-                        }
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-                return result;
-            }
-        }*/
     }
 
     class MyDragListener implements View.OnDragListener {
@@ -619,13 +560,11 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             Log.i("TOUCH", String.format("OnDrag event: %d", event.getAction()));
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
-                    // do nothing
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
                     targetView.setBackgroundColor(Color.RED);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
-                    //          targetView.setBackgroundDrawable(normalShape);
                     targetView.setBackgroundColor(Color.WHITE);
                     targetView.setBackground(getDrawable(R.drawable.cell));
                     break;
@@ -638,21 +577,23 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     View sourceDayView = (View) sourceView.getParent();
 
                     Log.i("TOUCH", String.format("OnDrag: %b", isDragged));
-                    if (!isDragged) {
-                        cellOnClick(sourceDayView);
-                        isDragged = false;
-                    } else {
-                        if (null == sourceView.getTag())
-                            break;
 
-                        if (sourceView.getTag() instanceof FabionEvent) {
-                            FabionEvent fe = (FabionEvent) sourceView.getTag();
-                            Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
-                            intent.putExtra(PAR_FUSER, fabionUser);
-                            intent.putExtra(PAR_FEVENT, fe);
-                            startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
-                        }
+                    isDragged = false;
+                    if (null == sourceView.getTag())
+                        break;
+
+                    int newDay = Integer.parseInt(((TextView) ((LinearLayout) targetView).getChildAt(0)).getText().toString());
+
+                    if (sourceView.getTag() instanceof FabionEvent) {
+                        FabionEvent fe = (FabionEvent) sourceView.getTag();
+                        fe.setDay(newDay);
+                        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+                        intent.putExtra(PAR_FUSER, fabionUser);
+                        intent.putExtra(PAR_FEVENT, fe);
+                        intent.putExtra(PAR_FEVENT_EDIT, true);
+                        startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
                     }
+
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
                     break;

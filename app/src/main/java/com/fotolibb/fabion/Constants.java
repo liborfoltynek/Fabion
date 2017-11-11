@@ -19,6 +19,8 @@ public class Constants {
     public static String PAR_FUSER = "FUser";
     public static String PAR_FEVENT = "FEvent";
 
+    public static String PAR_FEVENT_EDIT = "FEVENT_EDIT";
+
     public static void setUrlService(String url) {
         if (!urlServiceSet) {
             urlService = url;

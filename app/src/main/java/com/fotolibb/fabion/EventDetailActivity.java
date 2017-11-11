@@ -24,6 +24,7 @@ import java.util.Calendar;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.fotolibb.fabion.Constants.PAR_FEVENT;
+import static com.fotolibb.fabion.Constants.PAR_FEVENT_EDIT;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
 public class EventDetailActivity extends AppCompatActivity implements View.OnClickListener {
@@ -55,6 +56,13 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             Intent i = getIntent();
             fabionEvent = i.getExtras().getParcelable(PAR_FEVENT);
             fabionUser = i.getExtras().getParcelable(PAR_FUSER);
+
+            boolean edit = false;
+
+            if (i.hasExtra(PAR_FEVENT_EDIT))
+            {
+                edit = i.getExtras().getBoolean(PAR_FEVENT_EDIT);
+            }
 
             day = fabionEvent.getDay();
             month = fabionEvent.getMonth();
@@ -104,7 +112,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
 
             ((EditText) findViewById(R.id.eventDetailDate)).setText(String.format("%02d.%02d.%d", fabionEvent.getDay(), fabionEvent.getMonth(), fabionEvent.getYear()));
 
-            if (fabionEvent.getId() == 0) {
+            if (edit || fabionEvent.getId() == 0) {
                 SwitchEditMode(true);
                 fab.setVisibility(GONE);
                 findViewById(R.id.eventDetailEditNote).requestFocus();

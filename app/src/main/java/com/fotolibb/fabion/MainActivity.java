@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements IImageOwner {
 
         mainActivity = this;
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_production));
+        Constants.setUrlService(getResources().getString(R.string.url_fabion_service_stage));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
