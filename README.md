@@ -27,3 +27,11 @@ VYLEPŠENÍ
 1.0.4
 VYLEPŠENÍ
 - hlavní obrazovka zobrazuje fotku přihlášeného uživatele
+
+1.0.5
+VYLEPŠENÍ
+- změna datumu rezervace přetažením
+
+1.0.6
+OPRAVA CHYB
+- url směrována na špatný server
