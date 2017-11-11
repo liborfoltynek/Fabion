@@ -1,5 +1,6 @@
 package com.fotolibb.fabion;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -8,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import java.util.Calendar;
 
 import static com.fotolibb.fabion.Constants.FAB_USER;
 import static com.fotolibb.fabion.Constants.PAR_FEVENT;
+import static com.fotolibb.fabion.Constants.PAR_FEVENT_EDIT;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
 
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer, IStringConsumer {
@@ -42,6 +45,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private ArrayList<FabionEvent> events;
     private ViewFlipper flipper;
     private int delta = 1;
+    private boolean isDragged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +77,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
         gestDetector = new GestureDetector(this,
                 new GestureDetector.SimpleOnGestureListener() {
+
                     @Override
-                    public boolean onFling(MotionEvent e1, MotionEvent e2,
-                                           float deltaX, float deltaY) {
+                    public boolean onFling(MotionEvent motionEvent1, MotionEvent motionEvent2, float deltaX, float deltaY) {
                         if (deltaY < 3000 && deltaY > -3000) {
 
                             if (deltaX < -10.0f) {
@@ -97,10 +101,12 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                                 }
                                 LoadData(mainActivity);
                             }
+                            return true;
                         }
-                        return true;
+                        return false;
                     }
                 });
+
 
         delta = 0;
         LoadData(this);
@@ -136,7 +142,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //TODO: finish menu
-    //    getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
+        getMenuInflater().inflate(R.menu.menu_events_by_months_scrolling, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -145,17 +152,14 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_switchlogin) {
-            return true;
-        }
-
-        if (id == R.id.menuLogin) {
-            Login();
-        } else if (id == R.id.menuLogout) {
-            Logout();
+        switch (item.getItemId()) {
+            case R.id.menuLogout:
+                Logout();
+                break;
+            case R.id.action_switchlogin:
+                Logout();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -196,19 +200,40 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     public void cellOnClick(View view) {
         try {
-
             if (fabionUser.isLogged()) {
+                LinearLayout b = null;
 
-                LinearLayout b = (LinearLayout) view;
-                TextView aa = (TextView) b.getChildAt(0);
-                Integer day = Integer.parseInt(aa.getText().toString());
+                if (view != null) {
+                    if (view.getTag() instanceof FabionEvent) {
+                        b = (LinearLayout) view.getParent().getParent();
+                    } else {
+                        String tag = (String) view.getTag();
+                        if (tag.equals("FullDay")) {
+                            Log.i("TOUCH", "Klik na FullDay");
+                            b = (LinearLayout) view;
+                        }
+                        if (tag.equals("FullDayText")) {
+                            Log.i("TOUCH", "Klik na FullDayText");
+                            b = (LinearLayout) view.getParent();
+                        }
+                        if (tag.equals("FullDayLL")) {
+                            Log.i("TOUCH", "Klik na FullDayLL");
+                            b = (LinearLayout) view.getParent();
+                        }
+                    }
 
-                Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity.class);
-                intent.putExtra(PAR_FUSER, fabionUser);
-                intent.putExtra("Day", day);
-                intent.putExtra("Month", month + 1);
-                intent.putExtra("Year", year);
-                startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+                    //b = (LinearLayout) view;
+                    //LinearLayout b = (LinearLayout) a.getChildAt(0);
+                    TextView aa = (TextView) b.getChildAt(0);
+                    Integer day = Integer.parseInt(aa.getText().toString());
+
+                    Intent intent = new Intent(getApplicationContext(), OneDayEventsViewActivity.class);
+                    intent.putExtra(PAR_FUSER, fabionUser);
+                    intent.putExtra("Day", day);
+                    intent.putExtra("Month", month + 1);
+                    intent.putExtra("Year", year);
+                    startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+                }
             } else {
                 Toast.makeText(getApplicationContext(), R.string.MUST_LOGIN_FOR_DETAILS, Toast.LENGTH_SHORT).show();
             }
@@ -287,13 +312,13 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
     private void renderCalendar(TableLayout tableLayout) {
         InitDaysHeader(tableLayout);
-        renderMonth(tableLayout);
+        RenderMonth(tableLayout);
     }
 
-    private void renderMonth(TableLayout tableLayout) {
+    private void RenderMonth(TableLayout tableLayout) {
         Calendar c = Calendar.getInstance();
-        int today = c.get(Calendar.DAY_OF_MONTH);
-        int tomonth = c.get(Calendar.MONTH);
+        int thisDay = c.get(Calendar.DAY_OF_MONTH);
+        int thisMonth = c.get(Calendar.MONTH);
         c.set(Calendar.DAY_OF_MONTH, 1);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.YEAR, year);
@@ -311,16 +336,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             tr.setLayoutParams(tp);
 
             for (int d = 0; d < 7; d++) {
-                LinearLayout l = new LinearLayout(this);
-                TableRow.LayoutParams llp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-                l.setOrientation(LinearLayout.VERTICAL);
-                l.setPadding(4, 0, 0, 2);
-                l.setLayoutParams(llp);
-
-                if ((day > 0) && (day <= c.getActualMaximum(Calendar.DAY_OF_MONTH))) {
-                    renderDay(today, tomonth, day, d, l, llp);
-                }
-
+                //if ((day > 0) && (day <= c.getActualMaximum(Calendar.DAY_OF_MONTH))) {
+                LinearLayout l = renderDay(thisDay, thisMonth, day, d);
+                //}
                 day++;
                 tr.addView(l);
             }
@@ -328,40 +346,75 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         }
     }
 
-    private void renderDay(int today, int tomonth, int day, int d, LinearLayout l, TableRow.LayoutParams llp) {
-        TextView tvDate = new TextView(this);
-        l.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell, null));
+    private int getMaxDaysInMonth(int month) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.YEAR, year);
+        return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
 
-        l.setOnClickListener(new View.OnClickListener() {
+    private LinearLayout renderDay(int today, int tomonth, int dayInMonth, int dayInWeek) {
+        LinearLayout fullDayLayout = new LinearLayout(this);
+        fullDayLayout.setTag("FullDay");
+        TableRow.LayoutParams fullDayLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        fullDayLayout.setOrientation(LinearLayout.VERTICAL);
+        fullDayLayout.setPadding(4, 0, 0, 2);
+        fullDayLayout.setLayoutParams(fullDayLayoutParams);
+
+        if (dayInMonth <= 0 || dayInMonth > getMaxDaysInMonth(month)) {
+            return fullDayLayout;
+        }
+
+        TextView tvDayNumber = new TextView(this);
+        tvDayNumber.setTag("FullDayText");
+        fullDayLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell, null));
+
+        if ((month == tomonth) && (dayInMonth == today)) {
+            fullDayLayout.setBackgroundColor(Color.argb(125, 153, 218, 234));
+        }
+
+        fullDayLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cellOnClick(view);
             }
         });
 
-        tvDate.setTextSize(24);
-        tvDate.setGravity(Gravity.TOP | Gravity.RIGHT);
-        tvDate.setText(Integer.toString(day));
-        tvDate.setPadding(0, 2, 12, 0);
-        if (d == 6) {
-            tvDate.setTextColor(Color.RED);
+        tvDayNumber.setTextSize(24);
+        tvDayNumber.setGravity(Gravity.TOP | Gravity.RIGHT);
+        tvDayNumber.setText(Integer.toString(dayInMonth));
+        tvDayNumber.setPadding(0, 2, 12, 0);
+        tvDayNumber.setTextColor(dayInWeek == 6 ? Color.RED : Color.BLACK);
+
+        if ((month == tomonth) && (dayInMonth == today)) {
+            tvDayNumber.setTypeface(null, Typeface.BOLD);
         }
-        if ((month == tomonth) && (day == today)) {
-            tvDate.setTypeface(null, Typeface.BOLD);
-        }
-        l.addView(tvDate);
+        fullDayLayout.addView(tvDayNumber);
 
         LinearLayout lDay = new LinearLayout(this);
+        lDay.setTag("FullDayLL");
         lDay.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+        //Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        //int rotation = display.getRotation();
+        //lDay.setOrientation(rotation == 0 ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL );
+
         lDay.setOrientation(LinearLayout.VERTICAL);
         lDay.setPadding(0, 0, 0, 0);
-        lDay.setLayoutParams(llp);
+        lDay.setLayoutParams(fullDayLayoutParams);
 
-        ArrayList<View> texts = getDayText(day);
+        ArrayList<View> texts = getDayText(dayInMonth);
         for (View text : texts) {
+            text.setOnTouchListener(new MyTouchListener(this));
+            //SetOnTouchListener(text);
+            //text.setTag("FullDayLLText");
             lDay.addView(text);
         }
-        l.addView(lDay);
+        fullDayLayout.addView(lDay);
+
+        fullDayLayout.setOnDragListener(new MyDragListener());
+        return fullDayLayout;
     }
 
     private void InitDaysHeader(TableLayout tableLayout) {
@@ -376,6 +429,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private TextView getDayInWeekHeaderCell(String day) {
         TextView t = new TextView(this);
         t.setText(day);
+        t.setTextColor(Color.BLACK);
         t.setGravity(Gravity.CENTER);
         if (day.equals("Ne")) {
             t.setTypeface(null, Typeface.BOLD);
@@ -387,42 +441,52 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private ArrayList<View> getDayText(int d) {
         ArrayList<View> views = new ArrayList<View>();
         for (FabionEvent fe : events) {
-            if (fe.getDay() == d) {
-                TextView t = new TextView(getApplicationContext());
-                if (fabionUser.isLogged()) {
-                    t.setTextSize(11);
-                    t.setText(fe.getLogin());
-                    t.setTextColor(Color.BLACK);
-                    t.setPadding(3, 0, 0, 0);
-                    t.setGravity(Gravity.LEFT);
-                    if (fe.getLogin().equalsIgnoreCase(fabionUser.Login)) {
-                        t.setTextColor(Color.argb(255, 99, 99, 255));
-                    }
-                    views.add(t);
+            LinearLayout lEvent = new LinearLayout(this);
+            lEvent.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-                    TextView tt = new TextView(getApplicationContext());
-                    tt.setText(String.format("%s-%s", fe.getTimeFrom(), fe.getTimeTo()));
-                    tt.setTextSize(9);
-                    tt.setTextColor(Color.BLACK);
-                    TextView ttt = new TextView(getApplicationContext());
-                    ttt.setText("  ");
-                    ttt.setGravity(Gravity.CENTER);
-                    ttt.setTextSize(9);
-                    ttt.setTextColor(Color.BLACK);
-                    ttt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            lEvent.setOrientation(LinearLayout.VERTICAL);
+            lEvent.setPadding(0, 0, 0, 0);
+            lEvent.setTag(fe);
+
+            if (fe.getDay() == d) {
+                TextView tLogin = new TextView(getApplicationContext());
+                if (fabionUser.isLogged()) {
+                    tLogin.setTextSize(9);
+                    tLogin.setText(fe.getLogin());
+                    tLogin.setTextColor(Color.BLACK);
+                    tLogin.setPadding(3, 0, 0, 0);
+                    tLogin.setGravity(Gravity.LEFT);
+                    if (fe.getLogin().equalsIgnoreCase(fabionUser.Login)) {
+                        tLogin.setTextColor(Color.argb(255, 99, 99, 255));
+                    }
+
+                    TextView tTime = new TextView(getApplicationContext());
+                    tTime.setText(String.format("%s-%s", fe.getTimeFrom(), fe.getTimeTo()));
+                    tTime.setBackgroundColor(Color.argb(150, 222, 222, 222));
+                    tTime.setTextSize(11);
+                    tTime.setTextColor(Color.BLACK);
+
+                    TextView tPlaceHolder = new TextView(getApplicationContext());
+                    tPlaceHolder.setText("  ");
+                    tPlaceHolder.setGravity(Gravity.CENTER);
+                    tPlaceHolder.setTextSize(9);
+                    tPlaceHolder.setTextColor(Color.BLACK);
+                    tPlaceHolder.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                     LinearLayout sp = new LinearLayout(getApplicationContext());
                     sp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                     sp.setPadding(50, 0, 50, 0);
                     sp.setBackgroundColor(Color.BLACK);
                     sp.setGravity(Gravity.CENTER);
-                    sp.addView(ttt);
+                    sp.addView(tPlaceHolder);
 
-                    views.add(tt);
-                    views.add(sp);
+                    lEvent.addView(tTime);
+                    lEvent.addView(tLogin);
+                    lEvent.addView(sp);
+                    views.add(lEvent);
                 } else {
-                    t.setText("***");
-                    views.add(t);
+                    tLogin.setText("***");
+                    views.add(tLogin);
                 }
             }
         }
@@ -434,5 +498,109 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         intent.putExtra(PAR_FUSER, fabionUser);
         intent.putExtra(PAR_FEVENT, FabionEvent.CreateNew(fabionUser));
         startActivityForResult(intent, Constants.RC_EVENT_NEW);
+    }
+
+    private final class MyTouchListener implements View.OnTouchListener {
+
+        EventsByMonthsScrollingActivity mainActivity;
+        View activeView;
+        private boolean longPress = false;
+
+        final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+            public void onLongPress(MotionEvent e) {
+                Log.e("TOUCH", "Longpress detected");
+                longPress = true;
+            }
+
+            public boolean onSingleTapUp(MotionEvent e) {
+                if (longPress) {
+                    longPress = false;
+                    return true;
+                } else return false;
+            }
+        });
+
+        public MyTouchListener(EventsByMonthsScrollingActivity c) {
+            mainActivity = c;
+        }
+
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            Log.i("TOUCH", String.format("onTouch, action: %d", motionEvent.getAction()));
+            if (!gestureDetector.onTouchEvent(motionEvent)) {
+                int action = motionEvent.getAction();
+                if (longPress && action == MotionEvent.ACTION_MOVE) {
+                    if (fabionUser.isLogged() && fabionUser.Login.equals(((FabionEvent) view.getTag()).getLogin())) {
+                        FabionEvent fe = (FabionEvent) view.getTag();
+                        Calendar cFE = Tools.getDate(fe);
+                        Calendar cNow = Calendar.getInstance();
+                        if (cNow.before(cFE)) {
+                            ClipData data = ClipData.newPlainText("", "");
+                            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                            view.startDrag(data, shadowBuilder, view, 0);
+                            isDragged = true;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (action == MotionEvent.ACTION_UP) {
+                        cellOnClick(view);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+    }
+
+    class MyDragListener implements View.OnDragListener {
+
+        @Override
+        public boolean onDrag(View targetView, DragEvent event) {
+            Log.i("TOUCH", String.format("OnDrag event: %d", event.getAction()));
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    targetView.setBackgroundColor(Color.RED);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    targetView.setBackgroundColor(Color.WHITE);
+                    targetView.setBackground(getDrawable(R.drawable.cell));
+                    break;
+                case DragEvent.ACTION_DROP:
+                    targetView.setBackgroundColor(Color.WHITE);
+                    targetView.setBackground(getDrawable(R.drawable.cell));
+
+                    // Dropped, reassign View to ViewGroup
+                    View sourceView = (View) event.getLocalState();
+                    View sourceDayView = (View) sourceView.getParent();
+
+                    Log.i("TOUCH", String.format("OnDrag: %b", isDragged));
+
+                    isDragged = false;
+                    if (null == sourceView.getTag())
+                        break;
+
+                    int newDay = Integer.parseInt(((TextView) ((LinearLayout) targetView).getChildAt(0)).getText().toString());
+
+                    if (sourceView.getTag() instanceof FabionEvent) {
+                        FabionEvent fe = (FabionEvent) sourceView.getTag();
+                        fe.setDay(newDay);
+                        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+                        intent.putExtra(PAR_FUSER, fabionUser);
+                        intent.putExtra(PAR_FEVENT, fe);
+                        intent.putExtra(PAR_FEVENT_EDIT, true);
+                        startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+                    }
+
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
     }
 }

@@ -4,18 +4,15 @@
     tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity">
 
     <item
-        android:id="@+id/menuLogin"
-        android:icon="@drawable/ic_menu_share"
-        android:title="Přihlásit" />
-    <item
         android:id="@+id/menuLogout"
-        android:icon="@drawable/ic_menu_send"
-        android:title="Odhlásit" />
+        android:icon="@drawable/power"
+        android:title="Odhlásit"
+        app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_switchlogin"
+    <!-- <item
+        android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
+        -->
 
 </menu>

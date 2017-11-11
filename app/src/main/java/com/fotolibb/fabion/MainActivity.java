@@ -1,6 +1,7 @@
 package com.fotolibb.fabion;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +18,7 @@ import static com.fotolibb.fabion.Constants.FAB_USER;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
 import static com.fotolibb.fabion.Constants.RO_MONTHVIEW;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IImageOwner {
     private FabionUser fabionUser;
     private MainActivity mainActivity;
     private Menu menu;
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             try {
                 Intent intent2 = new Intent(getApplicationContext(), LoginActivity.class);
+                intent2.putExtra("TryAutoLogin", !showAlreadyLoggedMessage);
                 startActivityForResult(intent2, Constants.RO_LOGIN);
             } catch (Exception ex) {
                 Log.e(getString(R.string.TAG_EX), ex.getMessage());
@@ -173,12 +176,25 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.userDetailName)).setText(fu.Name);
             ((TextView) findViewById(R.id.userDetailFreeHours)).setText(Integer.toString(fu.FreeHours));
             ((TextView) findViewById(R.id.userDetailLogin)).setText(fu.Login);
+            ((ImageView) findViewById(R.id.imageViewUser)).setVisibility(View.VISIBLE);
+
+            String url = Constants.getUrlService() + "userimage.php?login=%s";
+            String u = String.format(url, fabionUser.Login);
+            new DownloadImageAsyncTask(getApplicationContext(), this).execute(new String[]{u});
+
         } else {
             TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
             tl.setVisibility(View.GONE);
 
             ((TextView) findViewById(R.id.userText)).setText(fu.toString());
             ((TextView) findViewById(R.id.userText)).setVisibility(View.VISIBLE);
+            ((ImageView) findViewById(R.id.imageViewUser)).setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void setUserImage(Bitmap bmp) {
+        ImageView iv = (ImageView) findViewById(R.id.imageViewUser);
+        iv.setImageBitmap(bmp);
     }
 }

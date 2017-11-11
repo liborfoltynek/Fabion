@@ -37,11 +37,20 @@ public class Tools {
         c.set(Calendar.DAY_OF_MONTH, day);
     }
 
-
     public static Calendar getDateTime(String strDate, String strTime) {
         Calendar c = Calendar.getInstance();
         getTime(strTime, c);
         getDate(strDate, c);
         return c;
     }
+
+    public static Calendar getDate(FabionEvent fe) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, fe.getYear());
+        c.set(Calendar.MONTH, fe.getMonth()-1);
+        c.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        return c;
+    }
+
+
 }

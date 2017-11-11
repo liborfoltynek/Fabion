@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -12,6 +13,5 @@
         android:collapseColumns=""
         android:shrinkColumns="*"
         android:stretchColumns="*"
-        tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity">
-    </TableLayout>
+        tools:context="com.fotolibb.fabion.EventsByMonthsScrollingActivity"></TableLayout>
 </ScrollView>
