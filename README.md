@@ -41,3 +41,8 @@ VYLEPŠENÍ
 - při zahájení přetažení telefon krátce zavibruje
 - aktuální den při tažení je méně drasticky zvýrazněný
 - rezervaci nejde přetáhnout z minulosti nebo do minulosti
+
+1.0.8
+OPRAVA CHYB
+- po tažení rezervace do minulosti přestala rezervace reagovat
+- dnešní rezervace nešly přetáhnout, i když ještě nezačaly
