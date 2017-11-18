@@ -13,6 +13,12 @@ public class Tools {
         return c;
     }
 
+    public static Calendar getDateTime(String strDate) {
+        Calendar c = Calendar.getInstance();
+        getDateTime(strDate, c);
+        return c;
+    }
+
     private static void getTime(String strTime, Calendar c) {
         Integer h = Integer.parseInt(strTime.substring(0, 2));
         Integer m = Integer.parseInt(strTime.substring(3, 5));
@@ -22,13 +28,8 @@ public class Tools {
         c.set(Calendar.SECOND, 0);
     }
 
-    public static Calendar getDate(String strDate) {
-        Calendar c = Calendar.getInstance();
-        getDate(strDate, c);
-        return c;
-    }
 
-    private static void getDate(String strDate, Calendar c) {
+    private static void getDateTime(String strDate, Calendar c) {
         int day = Integer.parseInt(strDate.substring(0, 2));
         int month = Integer.parseInt(strDate.substring(3, 5));
         int year = Integer.parseInt(strDate.substring(6, 10));
@@ -40,17 +41,23 @@ public class Tools {
     public static Calendar getDateTime(String strDate, String strTime) {
         Calendar c = Calendar.getInstance();
         getTime(strTime, c);
-        getDate(strDate, c);
+        getDateTime(strDate, c);
         return c;
     }
 
-    public static Calendar getDate(FabionEvent fe) {
+    public static Calendar getDateTime(FabionEvent fe) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, fe.getYear());
         c.set(Calendar.MONTH, fe.getMonth()-1);
         c.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        getTime(fe.getTimeFrom(), c);
         return c;
     }
 
+    public static boolean isFabionEventFromFuture(FabionEvent fe) {
+        Calendar cFE = Tools.getDateTime(fe);
+        Calendar cNow = Calendar.getInstance();
+        return cNow.before(cFE);
+    }
 
 }

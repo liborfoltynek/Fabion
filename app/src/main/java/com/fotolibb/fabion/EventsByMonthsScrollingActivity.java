@@ -1,10 +1,12 @@
 package com.fotolibb.fabion;
 
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -530,14 +532,9 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 int action = motionEvent.getAction();
                 if (longPress && action == MotionEvent.ACTION_MOVE) {
                     if (fabionUser.isLogged() && fabionUser.Login.equals(((FabionEvent) view.getTag()).getLogin())) {
-                        FabionEvent fe = (FabionEvent) view.getTag();
-                        Calendar cFE = Tools.getDate(fe);
-                        Calendar cNow = Calendar.getInstance();
-                        if (cNow.before(cFE)) {
-                            ClipData data = ClipData.newPlainText("", "");
-                            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                            view.startDrag(data, shadowBuilder, view, 0);
-                            isDragged = true;
+
+                        if (Tools.isFabionEventFromFuture((FabionEvent) view.getTag())) {
+                            StartDragging(view);
                         }
                     } else {
                         return false;
@@ -551,34 +548,36 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
             }
             return false;
         }
+
+        private void StartDragging(View view) {
+            ClipData data = ClipData.newPlainText("", "");
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            view.startDrag(data, shadowBuilder, view, 0);
+            isDragged = true;
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(50);
+        }
     }
 
     class MyDragListener implements View.OnDragListener {
 
         @Override
         public boolean onDrag(View targetView, DragEvent event) {
-            Log.i("TOUCH", String.format("OnDrag event: %d", event.getAction()));
+            Log.i("TOUCH", String.format("XXX OnDrag event: %d", event.getAction()));
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    targetView.setBackgroundColor(Color.RED);
+                    setDragBackground(targetView, true);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
-                    targetView.setBackgroundColor(Color.WHITE);
-                    targetView.setBackground(getDrawable(R.drawable.cell));
+                    setDragBackground(targetView, false);
                     break;
                 case DragEvent.ACTION_DROP:
-                    targetView.setBackgroundColor(Color.WHITE);
-                    targetView.setBackground(getDrawable(R.drawable.cell));
-
-                    // Dropped, reassign View to ViewGroup
-                    View sourceView = (View) event.getLocalState();
-                    View sourceDayView = (View) sourceView.getParent();
-
-                    Log.i("TOUCH", String.format("OnDrag: %b", isDragged));
-
                     isDragged = false;
+                    setDragBackground(targetView, false);
+
+                    View sourceView = (View) event.getLocalState();
                     if (null == sourceView.getTag())
                         break;
 
@@ -586,12 +585,19 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
                     if (sourceView.getTag() instanceof FabionEvent) {
                         FabionEvent fe = (FabionEvent) sourceView.getTag();
-                        fe.setDay(newDay);
-                        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
-                        intent.putExtra(PAR_FUSER, fabionUser);
-                        intent.putExtra(PAR_FEVENT, fe);
-                        intent.putExtra(PAR_FEVENT_EDIT, true);
-                        startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+                        int oldDay = fe.getDay();
+                        if (newDay != oldDay) {
+                            fe.setDay(newDay);
+                            if (Tools.isFabionEventFromFuture(fe)) {
+                                Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+                                intent.putExtra(PAR_FUSER, fabionUser);
+                                intent.putExtra(PAR_FEVENT, fe);
+                                intent.putExtra(PAR_FEVENT_EDIT, true);
+                                startActivityForResult(intent, Constants.RC_EVENT_UPDATE);
+                            } else {
+                                fe.setDay(oldDay);
+                            }
+                        }
                     }
 
                     break;
@@ -601,6 +607,14 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                     break;
             }
             return true;
+        }
+
+        private void setDragBackground(View target, boolean b) {
+            if (b) {
+                target.setBackground(getDrawable(R.drawable.cell_drag_over));
+            } else {
+                target.setBackground(getDrawable(R.drawable.cell));
+            }
         }
     }
 }
