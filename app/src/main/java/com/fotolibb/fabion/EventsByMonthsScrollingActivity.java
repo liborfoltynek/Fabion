@@ -291,6 +291,14 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 flipper.setOutAnimation(Animations.animZlava1());
             }
         }
+        else {
+            ScrollView sv = (ScrollView) flipper.getCurrentView();
+            if (sv.getChildAt(0).getId() == R.id.calendarTableScroll1) {
+                tableLayout = tableLayout1;
+            } else {
+                tableLayout = tableLayout2;
+            }
+        }
 
         tableLayout.removeAllViews();
         renderCalendar(tableLayout);
