@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/obrazek"
         android:paddingTop="5dp"
+        android:text="login"
         android:textColor="#0033FF"
         android:textSize="20dp" />
 
@@ -27,6 +28,7 @@
         android:layout_below="@+id/evDetailLogin"
         android:layout_toRightOf="@+id/obrazek"
         android:paddingLeft="10dp"
+        android:text="subject"
         android:textColor="#000000"
         android:textSize="14dp" />
 
@@ -35,10 +37,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/evDetailSubject"
-        android:layout_toRightOf="@+id/obrazek"
+        android:layout_toEndOf="@+id/obrazek"
         android:paddingLeft="10dp"
+        android:text="00:00:00"
         android:textColor="#000000"
         android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/eventNote"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/evDetailTime"
+        android:layout_toEndOf="@+id/obrazek"
+        android:paddingLeft="10dp"
+        android:textSize="12dp"
+        android:textColor="#000000"
+        android:text="note" />
 
     <ImageView
         android:id="@+id/imDelete"

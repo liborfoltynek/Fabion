@@ -1,7 +1,11 @@
 package com.fotolibb.fabion;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 
 import static android.content.ContentValues.TAG;
 
@@ -42,10 +47,11 @@ public class UpdateEventAsyncTask
     protected String doInBackground(String... arg0) {
         String sJSON = null;
         InputStream in = null;
+        int initId = fabionEvent.getId();
 
         try {
             String mainUrl = servicesUrl + "event.php?l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&action=";
-            mainUrl += fabionEvent.getId() == 0 ? "n" : "u";
+            mainUrl += initId == 0 ? "n" : "u";
             URL url = new URL(String.format(mainUrl, login, password,
                     fabionEvent.getId(),
                     fabionEvent.getTimeFrom(),
@@ -91,6 +97,26 @@ public class UpdateEventAsyncTask
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        if (initId == 0)
+        {
+            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
+            String calendarName = mPrefs.getString("PREFS_KEY_CALENDAR_NAME", "");
+            Log.i("CAL", calendarName);
+
+            Calendar cal = Tools.getDateTime(fabionEvent);
+            Calendar c2 = Tools.getTime(fabionEvent.getTimeTo());
+            c2.set(fabionEvent.getYear(), fabionEvent.getMonth()-1,fabionEvent.getDay());
+
+            Intent intent = new Intent(Intent.ACTION_EDIT);
+            intent.setType("vnd.android.cursor.item/event");
+            intent.putExtra("beginTime", cal.getTimeInMillis());
+            intent.putExtra("allDay", false);
+            intent.putExtra("endTime", c2.getTimeInMillis());
+            intent.putExtra("title", fabionEvent.getNote());
+            intent.putExtra("calendar_id",2);
+            callingActivity.startActivity(intent);
+        }
+
         return sJSON;
     }
 }

@@ -239,7 +239,6 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
         eventTimeFromTextView = (EditText) findViewById(R.id.eventDetailTimeFrom);
         eventTimeToTextView = (EditText) findViewById(R.id.eventDetailTimeTo);
         eventDetailDateTextView.setInputType(InputType.TYPE_NULL);
-
         eventDetailButtonOK = (Button) findViewById(R.id.eventDetailOK);
 
         eventTimeFromTextView.setInputType(InputType.TYPE_NULL);

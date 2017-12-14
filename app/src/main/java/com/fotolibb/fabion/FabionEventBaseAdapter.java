@@ -25,6 +25,7 @@ import java.net.URLConnection;
 import java.util.List;
 
 import static android.util.Base64.DEFAULT;
+import static android.view.View.GONE;
 
 /**
  * Created by Libb on 28.10.2017.
@@ -57,6 +58,8 @@ public class FabionEventBaseAdapter
             hld.imageUser = (ImageView) convertView.findViewById(R.id.obrazek);
             hld.imageDelete = (ImageView) convertView.findViewById(R.id.imDelete);
             hld.txtLogin = (TextView) convertView.findViewById(R.id.evDetailLogin);
+            hld.txtNote = (TextView) convertView.findViewById(R.id.eventNote);
+
             convertView.setTag(hld);
         } else {
             hld = (ViewHolder) convertView.getTag();
@@ -66,6 +69,17 @@ public class FabionEventBaseAdapter
         hld.txtSubject.setText(polozka.getSubject());
         hld.txtLogin.setText(polozka.getLogin());
 
+        if (polozka.getLogin().equals(fabionUser.Login) || "libb".equals(fabionUser.Login))
+        {
+            hld.txtNote.setText(polozka.getNote(fabionUser.Login));
+            hld.txtNote.setVisibility(View.VISIBLE);
+        }
+        else {
+            hld.txtNote.setVisibility(GONE);
+        }
+
+
+
         String u = String.format(serviceUrl, polozka.getLogin());
         //hld.imageUser.setImageResource(R.drawable.photographer);
         new DownloadImageAsyncTask(context, hld).execute(new String[]{u});
@@ -74,7 +88,7 @@ public class FabionEventBaseAdapter
             hld.imageDelete.setVisibility(View.VISIBLE);
             hld.imageDelete.setContentDescription(Integer.toString(polozka.getId()));
         } else {
-            hld.imageDelete.setVisibility(View.GONE);
+            hld.imageDelete.setVisibility(GONE);
         }
 
         return convertView;
@@ -101,6 +115,7 @@ public class FabionEventBaseAdapter
         TextView txtSubject;
         TextView txtLogin;
         TextView txtTime;
+        TextView txtNote;
 
         private Boolean imageUserSet = false;
 

@@ -1,5 +1,9 @@
 package com.fotolibb.fabion;
 
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+
 import java.util.Calendar;
 
 /**
@@ -59,5 +63,4 @@ public class Tools {
         Calendar cNow = Calendar.getInstance();
         return cNow.before(cFE);
     }
-
 }

@@ -58,4 +58,10 @@
             android:text="timeTo"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    <TextView
+        android:id="@+id/eventNote"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:text="note"
+        android:layout_height="wrap_content" />
 </LinearLayout>
