@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import static android.content.ContentValues.TAG;
 
@@ -50,8 +51,8 @@ public class UpdateEventAsyncTask
                     fabionEvent.getId(),
                     fabionEvent.getTimeFrom(),
                     fabionEvent.getTimeTo(),
-                    fabionEvent.getSubject(),
-                    fabionEvent.getNote(),
+                    URLEncoder.encode(fabionEvent.getSubject(), "utf-8"),
+                    URLEncoder.encode(fabionEvent.getNote(),"utf-8"),
                     fabionEvent.getDay(),
                     fabionEvent.getMonth(),
                     fabionEvent.getYear()

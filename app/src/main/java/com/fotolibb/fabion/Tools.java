@@ -28,7 +28,6 @@ public class Tools {
         c.set(Calendar.SECOND, 0);
     }
 
-
     private static void getDateTime(String strDate, Calendar c) {
         int day = Integer.parseInt(strDate.substring(0, 2));
         int month = Integer.parseInt(strDate.substring(3, 5));
