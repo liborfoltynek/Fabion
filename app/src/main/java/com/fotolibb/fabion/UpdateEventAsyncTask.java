@@ -62,8 +62,8 @@ public class UpdateEventAsyncTask
                     fabionEvent.getId(),
                     fabionEvent.getTimeFrom(),
                     fabionEvent.getTimeTo(),
-                    URLEncoder.encode(fabionEvent.getSubject()),
-                    URLEncoder.encode(fabionEvent.getNote()),
+                    URLEncoder.encode(fabionEvent.getSubject(), "utf-8"),
+                    URLEncoder.encode(fabionEvent.getNote(), "utf-8"),
                     fabionEvent.getDay(),
                     fabionEvent.getMonth(),
                     fabionEvent.getYear()
