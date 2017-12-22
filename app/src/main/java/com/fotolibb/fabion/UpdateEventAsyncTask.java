@@ -1,11 +1,13 @@
 package com.fotolibb.fabion;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,10 +20,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
 import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static android.content.ContentValues.TAG;
+import static com.fotolibb.fabion.SettingsActivity.PREFS_KEY_CALENDAR_ID;
+import static com.fotolibb.fabion.SettingsActivity.PREFS_KEY_CALENDAR_NAME;
 
 /**
  * Created by Libb on 28.10.2017.
@@ -52,15 +57,13 @@ public class UpdateEventAsyncTask
 
         try {
             String mainUrl = servicesUrl + "event.php?l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&action=";
-            
             mainUrl += initId == 0 ? "n" : "u";
             URL url = new URL(String.format(mainUrl, login, password,
                     fabionEvent.getId(),
                     fabionEvent.getTimeFrom(),
                     fabionEvent.getTimeTo(),
-
-                    URLEncoder.encode(fabionEvent.getSubject(), "utf-8"),
-                    URLEncoder.encode(fabionEvent.getNote(),"utf-8"),
+                    URLEncoder.encode(fabionEvent.getSubject()),
+                    URLEncoder.encode(fabionEvent.getNote()),
                     fabionEvent.getDay(),
                     fabionEvent.getMonth(),
                     fabionEvent.getYear()
@@ -100,27 +103,45 @@ public class UpdateEventAsyncTask
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (initId == 0)
-        {
-            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
-            String calendarName = mPrefs.getString("PREFS_KEY_CALENDAR_NAME", "");
-            Log.i("CAL", calendarName);
-
-            Calendar cal = Tools.getDateTime(fabionEvent);
-            Calendar c2 = Tools.getTime(fabionEvent.getTimeTo());
-            c2.set(fabionEvent.getYear(), fabionEvent.getMonth()-1,fabionEvent.getDay());
-
-            Intent intent = new Intent(Intent.ACTION_EDIT);
-            intent.setType("vnd.android.cursor.item/event");
-            intent.putExtra("beginTime", cal.getTimeInMillis());
-            intent.putExtra("allDay", false);
-            intent.putExtra("endTime", c2.getTimeInMillis());
-            intent.putExtra("title", fabionEvent.getNote());
-            intent.putExtra("calendar_id",2);
-            callingActivity.startActivity(intent);
+        if (initId == 0) { // new event
+          addEvent(fabionEvent);
         }
 
         return sJSON;
+    }
+
+    private void addEvent(FabionEvent fe) {
+
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
+        String calendarName = mPrefs.getString(PREFS_KEY_CALENDAR_NAME, "");
+        long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
+        Log.i("CAL", calendarName);
+        ContentValues l_event = new ContentValues();
+        l_event.put("calendar_id", calendarId);
+        if (fe.getNote().length() > 0)
+        {
+            l_event.put("title", "\uD83D\uDCF7 " + fe.getNote());
+        }
+        else
+        {
+            l_event.put("title", "\uD83D\uDCF7 " + fe.getSubject());
+        }
+        //l_event.put("description", fe.getNote());
+        l_event.put("eventLocation", "Pohankova 8, Brno");
+        l_event.put("dtstart", Tools.getDateTimeFrom(fe).getTimeInMillis());
+        l_event.put("dtend", Tools.getDateTimeTo(fe).getTimeInMillis());
+        l_event.put("eventTimezone", TimeZone.getTimeZone("Europe/Prague").getID());
+        l_event.put("allDay", 0);
+        //status: 0~ tentative; 1~ confirmed; 2~ canceled
+        l_event.put("eventStatus", 1);
+       l_event.put("hasAlarm", 1);
+        Uri l_eventUri;
+        if (Build.VERSION.SDK_INT >= 8) {
+            l_eventUri = Uri.parse("content://com.android.calendar/events");
+        } else {
+            l_eventUri = Uri.parse("content://calendar/events");
+        }
+        Uri l_uri = callingActivity.getContentResolver().insert(l_eventUri, l_event);
     }
 }
 
