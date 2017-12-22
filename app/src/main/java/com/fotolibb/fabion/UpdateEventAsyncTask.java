@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
+import java.net.URLEncoder;
 
 import static android.content.ContentValues.TAG;
 
@@ -51,13 +52,15 @@ public class UpdateEventAsyncTask
 
         try {
             String mainUrl = servicesUrl + "event.php?l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&action=";
+            
             mainUrl += initId == 0 ? "n" : "u";
             URL url = new URL(String.format(mainUrl, login, password,
                     fabionEvent.getId(),
                     fabionEvent.getTimeFrom(),
                     fabionEvent.getTimeTo(),
-                    fabionEvent.getSubject(),
-                    fabionEvent.getNote(),
+
+                    URLEncoder.encode(fabionEvent.getSubject(), "utf-8"),
+                    URLEncoder.encode(fabionEvent.getNote(),"utf-8"),
                     fabionEvent.getDay(),
                     fabionEvent.getMonth(),
                     fabionEvent.getYear()
