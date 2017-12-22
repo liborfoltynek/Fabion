@@ -1,9 +1,13 @@
 package com.fotolibb.fabion;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements IImageOwner {
         setContentView(R.layout.activity_main);
 
         mainActivity = this;
+
+        askAll();
+
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         Constants.setUrlService(getResources().getString(R.string.url_fabion_service_production));
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -196,5 +203,19 @@ public class MainActivity extends AppCompatActivity implements IImageOwner {
     public void setUserImage(Bitmap bmp) {
         ImageView iv = (ImageView) findViewById(R.id.imageViewUser);
         iv.setImageBitmap(bmp);
+    }
+
+    private void askAll() {
+        askRights(Manifest.permission.READ_CALENDAR);
+        askRights(Manifest.permission.WRITE_CALENDAR);
+    }
+
+    private void askRights(String r) {
+        if (ContextCompat.checkSelfPermission(this, r) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, r)) {
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{r}, 5554);
+            }
+        }
     }
 }

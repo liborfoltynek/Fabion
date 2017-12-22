@@ -13,9 +13,9 @@ public class Tools {
         return c;
     }
 
-    public static Calendar getDateTime(String strDate) {
+    public static Calendar getDateTimeFrom(String strDate) {
         Calendar c = Calendar.getInstance();
-        getDateTime(strDate, c);
+        getDateTimeFrom(strDate, c);
         return c;
     }
 
@@ -28,8 +28,7 @@ public class Tools {
         c.set(Calendar.SECOND, 0);
     }
 
-
-    private static void getDateTime(String strDate, Calendar c) {
+    private static void getDateTimeFrom(String strDate, Calendar c) {
         int day = Integer.parseInt(strDate.substring(0, 2));
         int month = Integer.parseInt(strDate.substring(3, 5));
         int year = Integer.parseInt(strDate.substring(6, 10));
@@ -38,14 +37,14 @@ public class Tools {
         c.set(Calendar.DAY_OF_MONTH, day);
     }
 
-    public static Calendar getDateTime(String strDate, String strTime) {
+    public static Calendar getDateTimeFrom(String strDate, String strTime) {
         Calendar c = Calendar.getInstance();
         getTime(strTime, c);
-        getDateTime(strDate, c);
+        getDateTimeFrom(strDate, c);
         return c;
     }
 
-    public static Calendar getDateTime(FabionEvent fe) {
+    public static Calendar getDateTimeFrom(FabionEvent fe) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, fe.getYear());
         c.set(Calendar.MONTH, fe.getMonth()-1);
@@ -54,10 +53,18 @@ public class Tools {
         return c;
     }
 
+    public static Calendar getDateTimeTo(FabionEvent fe) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, fe.getYear());
+        c.set(Calendar.MONTH, fe.getMonth()-1);
+        c.set(Calendar.DAY_OF_MONTH, fe.getDay());
+        getTime(fe.getTimeTo(), c);
+        return c;
+    }
+
     public static boolean isFabionEventFromFuture(FabionEvent fe) {
-        Calendar cFE = Tools.getDateTime(fe);
+        Calendar cFE = Tools.getDateTimeFrom(fe);
         Calendar cNow = Calendar.getInstance();
         return cNow.before(cFE);
     }
-
 }

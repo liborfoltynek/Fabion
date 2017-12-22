@@ -150,6 +150,13 @@ public class FabionEvent implements Parcelable {
         return Note;
     }
 
+    public String getNote(String userLogin) {
+        if (this.Login.equals(userLogin) || "libb".equals(userLogin))
+            return Note;
+        else
+            return "";
+    }
+
     public void setNote(String note) {
         Note = note;
     }

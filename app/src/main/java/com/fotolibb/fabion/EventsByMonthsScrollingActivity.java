@@ -156,8 +156,8 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
-            case R.id.menuLogout:
-                Logout();
+            case R.id.menuSettings:
+                Settings();
                 break;
             case R.id.action_switchlogin:
                 Logout();
@@ -166,6 +166,12 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void Settings() {
+        Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+        startActivity(i);
+    }
+
 
     private void Login() {
         Login(true);
@@ -290,8 +296,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
                 flipper.setInAnimation(Animations.animZprava1());
                 flipper.setOutAnimation(Animations.animZlava1());
             }
-        }
-        else {
+        } else {
             ScrollView sv = (ScrollView) flipper.getCurrentView();
             if (sv.getChildAt(0).getId() == R.id.calendarTableScroll1) {
                 tableLayout = tableLayout1;
