@@ -48,6 +48,7 @@ public class FabionEvent implements Parcelable {
         Year = in.readInt();
         Subject = in.readString();
         Note = in.readString();
+        CalendarEventId = in.readInt();
     }
 
     public FabionEvent(int id, String login, String subject, String note, String tFrom, String tTo, int day, int month, int year, int calendarEventId) {

@@ -67,6 +67,8 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
             mYear = y;
         }
 
+        this.setTitle(String.format("%d. %s %d", d, getResources().getStringArray(R.array.mesice)[m-1], y));
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabOneDay);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
