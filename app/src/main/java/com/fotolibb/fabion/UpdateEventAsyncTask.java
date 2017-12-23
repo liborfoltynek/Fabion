@@ -56,7 +56,11 @@ public class UpdateEventAsyncTask
         int initId = fabionEvent.getId();
 
         try {
-            String mainUrl = servicesUrl + "event.php?l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&action=";
+            if (initId == 0) { // new event
+                fabionEvent.setCalendarEventId(addEvent(fabionEvent));
+            }
+
+            String mainUrl = servicesUrl + "event.php?l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&cid=%d&action=";
             mainUrl += initId == 0 ? "n" : "u";
             URL url = new URL(String.format(mainUrl, login, password,
                     fabionEvent.getId(),
@@ -66,7 +70,8 @@ public class UpdateEventAsyncTask
                     URLEncoder.encode(fabionEvent.getNote(), "utf-8"),
                     fabionEvent.getDay(),
                     fabionEvent.getMonth(),
-                    fabionEvent.getYear()
+                    fabionEvent.getYear(),
+                    fabionEvent.getCalendarEventId()
             ));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -103,15 +108,11 @@ public class UpdateEventAsyncTask
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (initId == 0) { // new event
-          addEvent(fabionEvent);
-        }
 
         return sJSON;
     }
 
-    private void addEvent(FabionEvent fe) {
-
+    private int addEvent(FabionEvent fe) {
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
         String calendarName = mPrefs.getString(PREFS_KEY_CALENDAR_NAME, "");
         long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
@@ -142,6 +143,11 @@ public class UpdateEventAsyncTask
             l_eventUri = Uri.parse("content://calendar/events");
         }
         Uri l_uri = callingActivity.getContentResolver().insert(l_eventUri, l_event);
+        Log.i("CAL", l_uri.toString());
+
+        String [] parts = l_uri.toString().split("/");
+        int i = Integer.parseInt(parts[parts.length-1]);
+        return i;
     }
 }
 

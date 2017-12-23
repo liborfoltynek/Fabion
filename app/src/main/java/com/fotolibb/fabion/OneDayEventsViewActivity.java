@@ -1,10 +1,13 @@
 package com.fotolibb.fabion;
 
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -138,6 +141,10 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         deleteEvent(Integer.toString(fEvent.getId()));
+                        if (fEvent.getCalendarEventId() > 0) {
+                            Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, Long.parseLong(String.valueOf(fEvent.getCalendarEventId())));
+                            int rows = getContentResolver().delete(deleteUri, null, null);
+                        }
                     }
                 });
         builder.setNegativeButton("Ne",

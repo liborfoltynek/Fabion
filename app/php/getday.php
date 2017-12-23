@@ -10,6 +10,7 @@ class Event
   public $month;
   public $year;
   public $subject;
+  public $calendarEventId;
   public $note;
   public $login;
 }
@@ -58,7 +59,7 @@ if (!empty($_GET["y"]) && !empty($_GET["m"]) && empty($_GET["d"]))
 	$dday = "";
 }
 
-$sql = "select e.id, e.day, strftime(\"%H:%M\", e.timefrom) as timefrom, strftime(\"%H:%M\", e.timeto) as timeto, e.user, e.subject, e.note, u.login as login from event as e left join users as u on u.id = e.user where $dday month=$month and year=$year order by day, timefrom";
+$sql = "select e.id, e.day, strftime(\"%H:%M\", e.timefrom) as timefrom, strftime(\"%H:%M\", e.timeto) as timeto, e.calendarEventId, e.user, e.subject, e.note, u.login as login from event as e left join users as u on u.id = e.user where $dday month=$month and year=$year order by day, timefrom";
 
 $result = $db->query($sql);
 
@@ -78,6 +79,8 @@ foreach($result as $row)
    $ev->subject = $row["subject"];
    $ev->note = $row["note"];
    $ev->login = $row["login"];
+   $ev->calendarEventId = $row["calendarEventId"];
+   
    array_push($events, $ev);  
 }
 $data->events = $events;

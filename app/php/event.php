@@ -12,6 +12,7 @@ class Event
   public $subject;
   public $note;
   public $login;
+  public $calendarEventId;
 }
 
 header('Content-Type: application/json');
@@ -48,6 +49,11 @@ if ($action == "n")
 	$y=$_GET["y"];
 	$m=$_GET["m"];
 	$d=$_GET["d"];
+	if (!empty($_GET["cid"]))
+		$calendarEventId=$_GET["cid"];
+	else
+		$calendarEventId = -1;
+	
 	$created = date('Y-m-d H:i:s');
 	
  $q = "select count(*) from event where day=$d and month=$m and year=$y and (( (timefrom < time('$timeFrom')) and (timeto > time('$timeFrom'))) or ((timefrom < time('$timeTo')) and (timeto > time('$timeTo')) ) or ( (timefrom > time('$timeFrom')) and (timeto < time('$timeTo')) ) or ( (timefrom = time('$from')) and (timeto = time('$to')) ))";
@@ -66,7 +72,7 @@ if ($action == "n")
   
   if ($cnt == 0)
 	{
-		$q = "insert into event (day, month, year,timefrom, timeto, user, subject, note, created, info) values ($d, $m, $y, time('$timeFrom'), time('$timeTo'), $dbUserId, '$subject', '$note', '$created', '$note')";
+		$q = "insert into event (day, month, year,timefrom, timeto, user, subject, note, created, info, calendarEventId) values ($d, $m, $y, time('$timeFrom'), time('$timeTo'), $dbUserId, '$subject', '$note', '$created', '$note', $calendarEventId)";
 		$result = $db->exec($q);     
   
 		$r->result = "ok";
@@ -155,6 +161,4 @@ if ($action == "u")
 
 $r->result = "unknown action";
 die (json_encode($r));	
-
-
 ?>

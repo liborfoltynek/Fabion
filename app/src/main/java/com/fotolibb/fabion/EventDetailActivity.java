@@ -40,7 +40,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
     private Button eventDetailButtonOK;
     private EditText eventTimeFromTextView, eventTimeToTextView;
 
-    private int day, month, year;
+    private int day, month, year, calendarEventId;
 
     private int TIME_PICKER_THEME = 0;
 
@@ -67,6 +67,7 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
             day = fabionEvent.getDay();
             month = fabionEvent.getMonth();
             year = fabionEvent.getYear();
+            calendarEventId = fabionEvent.getCalendarEventId();
 
             fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -179,7 +180,8 @@ public class EventDetailActivity extends AppCompatActivity implements View.OnCli
                 ((EditText) findViewById(R.id.eventDetailTimeTo)).getText().toString(),
                 day,
                 month,
-                year);
+                year,
+                calendarEventId);
 
         if (validateEvent(updatedEvent)) {
             new UpdateEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, Constants.getUrlService(), updatedEvent, this).execute();

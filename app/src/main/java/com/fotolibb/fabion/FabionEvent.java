@@ -2,6 +2,7 @@ package com.fotolibb.fabion;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,7 @@ public class FabionEvent implements Parcelable {
     private int Year;
     private String Subject;
     private String Note;
+    private int CalendarEventId;
 
     protected FabionEvent(Parcel in) {
         Id = in.readInt();
@@ -48,7 +50,7 @@ public class FabionEvent implements Parcelable {
         Note = in.readString();
     }
 
-    public FabionEvent(int id, String login, String subject, String note, String tFrom, String tTo, int day, int month, int year) {
+    public FabionEvent(int id, String login, String subject, String note, String tFrom, String tTo, int day, int month, int year, int calendarEventId) {
         Id = id;
         Login = login;
         TimeFrom = tFrom;
@@ -58,6 +60,7 @@ public class FabionEvent implements Parcelable {
         Year = year;
         Subject = subject;
         Note = note;
+        CalendarEventId = calendarEventId;
     }
 
     public FabionEvent(JSONObject jsonEventData) throws JSONException {
@@ -70,6 +73,12 @@ public class FabionEvent implements Parcelable {
         TimeTo = jsonEventData.getString("timeto");
         Subject = jsonEventData.getString("subject");
         Note = jsonEventData.getString("note");
+        try {
+            CalendarEventId = jsonEventData.getInt("calendarEventId");
+        } catch (Exception e) {
+            Log.e("EX", e.getMessage());
+            CalendarEventId = -1;
+        }
     }
 
     public static FabionEvent CreateNew(FabionUser fu) {
@@ -79,7 +88,7 @@ public class FabionEvent implements Parcelable {
         int Year = c.get(Calendar.YEAR);
         //String s = String.format("%s (%s)", fu.Name, fu.Login);
         return new FabionEvent(
-                0, fu.Login, "", "", "18:00", "20:00", Day, Month, Year);
+                0, fu.Login, "", "", "18:00", "20:00", Day, Month, Year, -1);
     }
 
     public int getId() {
@@ -146,8 +155,20 @@ public class FabionEvent implements Parcelable {
         Subject = subject;
     }
 
+    public int getCalendarEventId() {
+        return CalendarEventId;
+    }
+
+    public void setCalendarEventId(int calendarEventId) {
+        CalendarEventId = calendarEventId;
+    }
+
     public String getNote() {
         return Note;
+    }
+
+    public void setNote(String note) {
+        Note = note;
     }
 
     public String getNote(String userLogin) {
@@ -155,10 +176,6 @@ public class FabionEvent implements Parcelable {
             return Note;
         else
             return "";
-    }
-
-    public void setNote(String note) {
-        Note = note;
     }
 
     @Override
@@ -205,6 +222,7 @@ public class FabionEvent implements Parcelable {
         parcel.writeInt(Year);
         parcel.writeString(Subject);
         parcel.writeString(Note);
+        parcel.writeInt(CalendarEventId);
     }
 
     public int getImage() {
