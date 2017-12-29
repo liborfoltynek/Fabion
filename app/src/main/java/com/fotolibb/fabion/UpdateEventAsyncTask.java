@@ -1,13 +1,16 @@
 package com.fotolibb.fabion;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -115,9 +118,14 @@ public class UpdateEventAsyncTask
     }
 
     private int updateEvent(FabionEvent fe) {
+        if (ContextCompat.checkSelfPermission(callingActivity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
+            return 0;
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
-        String calendarName = mPrefs.getString(PREFS_KEY_CALENDAR_NAME, "");
+
         long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
+        if (calendarId == -1) {
+            return -1;
+        }
 
         ContentValues l_event = new ContentValues();
         //l_event.put("calendar_id", calendarId);
@@ -146,10 +154,16 @@ public class UpdateEventAsyncTask
     }
 
     private int addEvent(FabionEvent fe) {
+        if (ContextCompat.checkSelfPermission(callingActivity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
+            return 0;
+
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
-        String calendarName = mPrefs.getString(PREFS_KEY_CALENDAR_NAME, "");
         long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
-        Log.i("CAL", calendarName);
+        if (calendarId == -1)
+        {
+            return -1;
+        }
+
         ContentValues l_event = new ContentValues();
         l_event.put("calendar_id", calendarId);
         if (fe.getNote().length() > 0) {

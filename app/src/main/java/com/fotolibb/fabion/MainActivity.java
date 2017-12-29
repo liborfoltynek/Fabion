@@ -23,6 +23,10 @@ import static com.fotolibb.fabion.Constants.PAR_FUSER;
 import static com.fotolibb.fabion.Constants.RO_MONTHVIEW;
 
 public class MainActivity extends AppCompatActivity implements IImageOwner {
+
+    static final int MY_PERMISSIONS_REQUEST_CALENDAR = 5554;
+    static final int MY_PERMISSIONS_REQUEST_STORAGE = 5555;
+
     private FabionUser fabionUser;
     private MainActivity mainActivity;
     private Menu menu;
@@ -206,16 +210,40 @@ public class MainActivity extends AppCompatActivity implements IImageOwner {
     }
 
     private void askAll() {
-        askRights(Manifest.permission.READ_CALENDAR);
-        askRights(Manifest.permission.WRITE_CALENDAR);
+        //askRights(new String[]{Manifest.permission.INTERNET, Manifest.permission.READ_CALENDAR});
     }
 
-    private void askRights(String r) {
-        if (ContextCompat.checkSelfPermission(this, r) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, r)) {
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{r}, 5554);
-            }
+    private void askRights(String[] rights) {
+        boolean b = true;
+        for (String r : rights) {
+            b &= ContextCompat.checkSelfPermission(this, r) == PackageManager.PERMISSION_GRANTED;
+        }
+        if (!b) {
+            ActivityCompat.requestPermissions(this, rights, MY_PERMISSIONS_REQUEST_CALENDAR);
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALENDAR: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }

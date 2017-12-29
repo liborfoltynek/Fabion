@@ -1,14 +1,19 @@
 package com.fotolibb.fabion;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +31,7 @@ import java.util.Calendar;
 
 import static com.fotolibb.fabion.Constants.PAR_FEVENT;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
+import static com.fotolibb.fabion.SettingsActivity.PREFS_KEY_CALENDAR_ID;
 
 public class OneDayEventsViewActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, IEventsConsumer, IStringConsumer {
 
@@ -67,7 +73,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
             mYear = y;
         }
 
-        this.setTitle(String.format("%d. %s %d", d, getResources().getStringArray(R.array.mesice)[m-1], y));
+        this.setTitle(String.format("%d. %s %d", d, getResources().getStringArray(R.array.mesice)[m - 1], y));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabOneDay);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +98,7 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
     }
 
 
-        @Override
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View view,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == listView.getId()) {
@@ -142,11 +148,8 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
         builder.setPositiveButton("Ano",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        deleteEvent(Integer.toString(fEvent.getId()));
-                        if (fEvent.getCalendarEventId() > 0) {
-                            Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, Long.parseLong(String.valueOf(fEvent.getCalendarEventId())));
-                            int rows = getContentResolver().delete(deleteUri, null, null);
-                        }
+                        deleteEventOnServer(fEvent);
+                        deleteCalendarEvent(fEvent);
                     }
                 });
         builder.setNegativeButton("Ne",
@@ -160,6 +163,26 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void deleteEventOnServer(FabionEvent fe) {
+        new DeleteEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, Constants.getUrlService(), Integer.toString(fe.getId()), thisActivity).execute();
+    }
+
+    private void deleteCalendarEvent(FabionEvent fEvent) {
+        if (fEvent.getCalendarEventId() > 0) {
+
+            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+            long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
+            if (calendarId == -1) {
+                return;
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, Long.parseLong(String.valueOf(fEvent.getCalendarEventId())));
+                int rows = getContentResolver().delete(deleteUri, null, null);
+            }
+        }
     }
 
     private Boolean validateEvent(FabionEvent fe) {
@@ -190,10 +213,6 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
         }
 
         return !issue;
-    }
-
-    private void deleteEvent(String eventId) {
-        new DeleteEventAsyncTask(fabionUser.Login, fabionUser.PasswordHash, Constants.getUrlService(), eventId, thisActivity).execute();
     }
 
     private void loadData() {

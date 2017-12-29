@@ -1,5 +1,7 @@
 package com.fotolibb.fabion;
 
+import android.content.pm.PackageManager;
+
 import java.util.Calendar;
 
 /**
@@ -7,6 +9,7 @@ import java.util.Calendar;
  */
 
 public class Tools {
+
     public static Calendar getTime(String strTime) {
         Calendar c = Calendar.getInstance();
         getTime(strTime, c);
@@ -47,7 +50,7 @@ public class Tools {
     public static Calendar getDateTimeFrom(FabionEvent fe) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, fe.getYear());
-        c.set(Calendar.MONTH, fe.getMonth()-1);
+        c.set(Calendar.MONTH, fe.getMonth() - 1);
         c.set(Calendar.DAY_OF_MONTH, fe.getDay());
         getTime(fe.getTimeFrom(), c);
         return c;
@@ -56,7 +59,7 @@ public class Tools {
     public static Calendar getDateTimeTo(FabionEvent fe) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, fe.getYear());
-        c.set(Calendar.MONTH, fe.getMonth()-1);
+        c.set(Calendar.MONTH, fe.getMonth() - 1);
         c.set(Calendar.DAY_OF_MONTH, fe.getDay());
         getTime(fe.getTimeTo(), c);
         return c;
@@ -66,5 +69,16 @@ public class Tools {
         Calendar cFE = Tools.getDateTimeFrom(fe);
         Calendar cNow = Calendar.getInstance();
         return cNow.before(cFE);
+    }
+
+    public static boolean allPermissionsGranted(int[] grantResults) {
+        if (grantResults.length == 0) {
+            return false;
+        }
+        for (int res : grantResults)
+            if (res != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        return true;
     }
 }

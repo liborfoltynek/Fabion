@@ -1,13 +1,17 @@
 package com.fotolibb.fabion;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,12 +33,14 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import static com.fotolibb.fabion.Constants.FAB_USER;
 import static com.fotolibb.fabion.Constants.PAR_FEVENT;
 import static com.fotolibb.fabion.Constants.PAR_FEVENT_EDIT;
 import static com.fotolibb.fabion.Constants.PAR_FUSER;
+import static com.fotolibb.fabion.MainActivity.MY_PERMISSIONS_REQUEST_CALENDAR;
 
 public class EventsByMonthsScrollingActivity extends AppCompatActivity implements IEventsConsumer, IStringConsumer {
     ProgressBar progressBar;
@@ -48,6 +54,7 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     private ViewFlipper flipper;
     private int delta = 1;
     private boolean isDragged;
+    private final int MY_PERMISSIONS_REQUEST_CALENDAR_SETTINGS = 5559;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,10 +175,38 @@ public class EventsByMonthsScrollingActivity extends AppCompatActivity implement
     }
 
     private void Settings() {
-        Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
-        startActivity(i);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+            startSettings();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR}, MY_PERMISSIONS_REQUEST_CALENDAR_SETTINGS);
+        }
     }
 
+    private void startSettings() {
+        Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+        startActivity(i);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALENDAR_SETTINGS: {
+                // If request is cancelled, the result arrays are empty.
+                if (Tools.allPermissionsGranted(grantResults)) {
+                    // permission was granted, yay! Do the contacts-related task you need to do.
+                    startSettings();
+                } else {
+                    // permission denied, boo! Disable the functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(), "Bez přidělení práva ke kalendáři není možné vytvářet události", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            // other 'case' lines to check for other permissions this app might request
+        }
+    }
 
     private void Login() {
         Login(true);
