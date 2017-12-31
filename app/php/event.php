@@ -66,21 +66,34 @@ if ($action == "n")
   }
   settype($cnt, "integer");
   
-  $logfile = fopen("log.txt", "a"); 
+   $logfile = fopen("log.txt", "a"); 
    fwrite($logfile, date('Y-m-d') . " " . date("H:i:s") . ": [EVENT] NEW "  . $login . "\n");
    fclose($logfile);     
   
   if ($cnt == 0)
 	{
 		$q = "insert into event (day, month, year,timefrom, timeto, user, subject, note, created, info, calendarEventId) values ($d, $m, $y, time('$timeFrom'), time('$timeTo'), $dbUserId, '$subject', '$note', '$created', '$note', $calendarEventId)";
-		$result = $db->exec($q);     
-  
+		$result = $db->exec($q);
+
 		$r->result = "ok";
+		$q = "select max(id) as eid from event where day=$d and month=$m and year=$y and subject='$subject' and timefrom=time('$timeFrom') and timeto=time('$timeTo')"; 
+		 
+		 $logfile = fopen("log.txt", "a"); 
+		fwrite($logfile, date('Y-m-d') . " " . date("H:i:s") . ": [EVENT] NEW ID QUESY="  . $q . "\n");
+		fclose($logfile);     
+		
+		$result = $db->query($q);  
+		foreach ($result as $row)
+		{
+		  $r->eventId = $row[0];
+		}				
+				
 		die(json_encode($r));
 	}
 	else	  
 	{
 		$r->result = "Kolize s jinou rezervací";
+		$r->eventId = -1;
 		die(json_encode($r));
 	}
 } 
@@ -145,7 +158,7 @@ if ($action == "u")
 		$result = $db->exec($q);
   
 		$r->result = "ok";
-		
+		$r->eventId = $eventId;
 		$logfile = fopen("log.txt", "a"); 
 		fwrite($logfile, date('Y-m-d') . " " . date("H:i:s") . ": [EVENT] UPDATE "  . $login . "\n");
 		fclose($logfile);     
@@ -155,6 +168,7 @@ if ($action == "u")
 	else	  
 	{
 		$r->result = "Kolize s jinou rezervací";
+		$r->eventId = $eventId;
 		die(json_encode($r));
 	}	
 }

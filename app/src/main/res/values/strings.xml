@@ -26,6 +26,7 @@
     <string name="MUST_LOGIN_FOR_DETAILS">Pro zobrazení detailů se musíte přihlásit</string>
     <string name="action_login">Přihlásit</string>
     <string name="action_logout">Odhlásit</string>
+    <string name="fabionID">###FABION ID=</string>
 
     <string-array name="daysInWeek">
         <item>Po</item>

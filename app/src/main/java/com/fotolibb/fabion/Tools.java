@@ -1,6 +1,11 @@
 package com.fotolibb.fabion;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.CalendarContract;
 
 import java.util.Calendar;
 
@@ -80,5 +85,24 @@ public class Tools {
                 return false;
             }
         return true;
+    }
+
+    public static int getCalendarEventId(FabionEvent fe, ContentResolver contentResolver) {
+        Uri.Builder eventsUriBuilder = CalendarContract.Instances.CONTENT_URI.buildUpon();
+        ContentUris.appendId(eventsUriBuilder, Long.MIN_VALUE);
+        ContentUris.appendId(eventsUriBuilder, Long.MAX_VALUE);
+
+        Uri eventsUri = eventsUriBuilder.build();
+        Cursor cursor = contentResolver.query(
+                eventsUri,
+                new String[]{CalendarContract.Instances.CALENDAR_ID, CalendarContract.Instances.EVENT_ID},
+                CalendarContract.Instances.DESCRIPTION +  " like '%###FABION ID="+ fe.getId() + "%'",
+                null,
+                CalendarContract.Instances.BEGIN + " ASC");
+
+        if (cursor.moveToFirst()) {
+            return cursor.getInt(1);
+        }
+        return -1;
     }
 }

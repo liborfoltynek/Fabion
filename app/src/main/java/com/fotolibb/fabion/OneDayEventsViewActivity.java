@@ -170,16 +170,16 @@ public class OneDayEventsViewActivity extends AppCompatActivity implements Adapt
     }
 
     private void deleteCalendarEvent(FabionEvent fEvent) {
-        if (fEvent.getCalendarEventId() > 0) {
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
+        if (calendarId == -1) {
+            return;
+        }
 
-            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-            long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
-            if (calendarId == -1) {
-                return;
-            }
-
+        int eventId = Tools.getCalendarEventId(fEvent, getContentResolver());
+        if (eventId > 0) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, Long.parseLong(String.valueOf(fEvent.getCalendarEventId())));
+                Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
                 int rows = getContentResolver().delete(deleteUri, null, null);
             }
         }

@@ -29,7 +29,6 @@ import java.util.TimeZone;
 
 import static android.content.ContentValues.TAG;
 import static com.fotolibb.fabion.SettingsActivity.PREFS_KEY_CALENDAR_ID;
-import static com.fotolibb.fabion.SettingsActivity.PREFS_KEY_CALENDAR_NAME;
 
 /**
  * Created by Libb on 28.10.2017.
@@ -59,12 +58,6 @@ public class UpdateEventAsyncTask
         int initId = fabionEvent.getId();
 
         try {
-            if (initId == 0) { // new event
-                fabionEvent.setCalendarEventId(addEvent(fabionEvent));
-            } else {
-                updateEvent(fabionEvent);
-            }
-
             String mainUrl = servicesUrl + "event.php?l=%s&p=%s&id=%d&tf=%s&tt=%s&s=%s&n=%s&d=%d&m=%d&y=%d&cid=%d&action=";
             mainUrl += initId == 0 ? "n" : "u";
             URL url = new URL(String.format(mainUrl, login, password,
@@ -109,6 +102,17 @@ public class UpdateEventAsyncTask
         try {
             jsonObject = new JSONObject(sJSON);
             String result = jsonObject.getString("result");
+            int reservationId = jsonObject.getInt("eventId");
+
+            if (result.equals("ok")) {
+                if (initId == 0) { // new event
+                    fabionEvent.setId(reservationId);
+                    addEvent(fabionEvent);
+                } else {
+                    updateEvent(fabionEvent);
+                }
+            }
+
             callingActivity.ProcessData(result);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -118,37 +122,35 @@ public class UpdateEventAsyncTask
     }
 
     private int updateEvent(FabionEvent fe) {
-        if (ContextCompat.checkSelfPermission(callingActivity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(callingActivity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             return 0;
-        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
+        }
 
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
         long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
         if (calendarId == -1) {
             return -1;
         }
 
+        int calendarEventId = Tools.getCalendarEventId(fe, callingActivity.getContentResolver());
+
         ContentValues l_event = new ContentValues();
-        //l_event.put("calendar_id", calendarId);
         if (fe.getNote().length() > 0) {
             l_event.put("title", "\uD83D\uDCF7 " + fe.getNote());
         } else {
             l_event.put("title", "\uD83D\uDCF7 " + fe.getSubject());
         }
-        //l_event.put("description", fe.getNote());
-
         l_event.put("dtstart", Tools.getDateTimeFrom(fe).getTimeInMillis());
         l_event.put("dtend", Tools.getDateTimeTo(fe).getTimeInMillis());
         l_event.put("eventTimezone", TimeZone.getTimeZone("Europe/Prague").getID());
         l_event.put("allDay", 0);
-        //status: 0~ tentative; 1~ confirmed; 2~ canceled
-        Uri l_eventUri;
-        if (Build.VERSION.SDK_INT >= 8) {
-            l_eventUri = Uri.parse("content://com.android.calendar/events/" + Integer.toString(fe.getCalendarEventId()));
-        } else {
-            l_eventUri = Uri.parse("content://calendar/events/" + Integer.toString(fe.getCalendarEventId()));
-        }
-        l_eventUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, fe.getCalendarEventId());
 
+        String note = fe.getNote();
+        if (note.length() > 0)
+            note = "\r\n\r\n" + note;
+        l_event.put("description", String.format("%s### Neměňte následující řádky, v opačném případě nebude fungovat synchronizace!\r\n%s%d", note, callingActivity.getString(R.string.fabionID), fe.getId()));
+
+        Uri l_eventUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, calendarEventId);
         int i = callingActivity.getContentResolver().update(l_eventUri, l_event, null, null);
         return i;
     }
@@ -159,8 +161,7 @@ public class UpdateEventAsyncTask
 
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(callingActivity);
         long calendarId = mPrefs.getLong(PREFS_KEY_CALENDAR_ID, -1);
-        if (calendarId == -1)
-        {
+        if (calendarId == -1) {
             return -1;
         }
 
@@ -171,7 +172,11 @@ public class UpdateEventAsyncTask
         } else {
             l_event.put("title", "\uD83D\uDCF7 " + fe.getSubject());
         }
-        //l_event.put("description", fe.getNote());
+        String note = fe.getNote();
+        if (note.length() > 0)
+            note = "\r\n\r\n" + note;
+        l_event.put("description", String.format("%s### Neměňte následující řádky, v opačném případě nebude fungovat synchronizace!\r\n%s%d", note, callingActivity.getString(R.string.fabionID), fe.getId()));
+
         l_event.put("eventLocation", "Pohankova 8, Brno");
         l_event.put("dtstart", Tools.getDateTimeFrom(fe).getTimeInMillis());
         l_event.put("dtend", Tools.getDateTimeTo(fe).getTimeInMillis());

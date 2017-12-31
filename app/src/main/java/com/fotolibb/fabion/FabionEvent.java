@@ -160,11 +160,11 @@ public class FabionEvent implements Parcelable {
         return CalendarEventId;
     }
 
-    public void setCalendarEventId(int calendarEventId) {
-        CalendarEventId = calendarEventId;
-    }
+
 
     public String getNote() {
+        if (Note == null)
+            return "";
         return Note;
     }
 
